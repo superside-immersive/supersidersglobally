@@ -7,12 +7,13 @@ import { countryData } from './countries.js';
 /**
  * Category Colors
  * Each category has a unique color for visualization
+ * Using bright colors from the palette for visibility in dark scenes
  */
 export const categoryColors = {
-    'lone_wolf': '#5CFF85',        // Screamin' Green
-    'latin_america': '#D8FF85',     // Honeysuckle
-    'europe': '#0F2133',            // Firefly
-    'africa': '#FAFAFA'             // Alabaster
+    'lone_wolf': '#8DFDBA',        // Mint - bright green for lone wolves
+    'latin_america': '#D8FF85',    // Spark - bright yellow-green for Latin America
+    'europe': '#A1D4FF',           // Sky - bright blue for Europe
+    'africa': '#FF9595'            // Peach - bright coral-pink for Africa
 };
 
 export const categories = {

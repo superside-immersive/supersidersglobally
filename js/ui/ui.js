@@ -95,11 +95,16 @@ export function populateCategoryList(countryData, globe, updateVisualizationFn) 
         
         if (activeCategory === categoryId) {
             categoryItem.classList.add('active');
+            // Apply the category color to the active item
+            categoryItem.style.background = categoryData.color;
+            categoryItem.style.borderColor = categoryData.color;
         }
         
         categoryItem.addEventListener('click', (e) => {
             document.querySelectorAll('.category-item').forEach(item => {
                 item.classList.remove('active');
+                item.style.background = '';
+                item.style.borderColor = '';
             });
             
             if (activeCategory === categoryId) {
@@ -107,11 +112,19 @@ export function populateCategoryList(countryData, globe, updateVisualizationFn) 
                 stopAirplaneFlight();
                 activeCategory = null;
                 
+                // Re-enable ALL countries when deselecting
+                enabledCountries = new Set(countryData.map(country => country.name));
+                
                 // Re-enable auto rotation
                 globe.controls().autoRotate = true;
             } else {
                 activeCategory = categoryId;
                 categoryItem.classList.add('active');
+                
+                // Apply the category color to the selected item
+                const categoryColor = categoryData.color;
+                categoryItem.style.background = categoryColor;
+                categoryItem.style.borderColor = categoryColor;
                 
                 const validCountries = categoryData.countries.filter(countryName => 
                     countryData.some(country => country.name === countryName)

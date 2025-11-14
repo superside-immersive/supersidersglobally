@@ -257,9 +257,8 @@ body {
 }
 
 .category-item.active {
-    background: #86F5AF !important;
-    color: #1A302F;
-    border-color: #DAFF87;
+    /* Background and border set dynamically via JS */
+    color: #0F2133 !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(134, 245, 175, 0.4);
 }
@@ -286,8 +285,8 @@ body {
 }
 
 .category-item.active .category-count {
-    color: #1A302F;
-    background: rgba(26, 48, 47, 0.3);
+    color: #0F2133 !important;
+    background: rgba(15, 33, 51, 0.2);
     opacity: 1;
 }
 
