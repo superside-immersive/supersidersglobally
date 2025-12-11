@@ -173,6 +173,19 @@ export function populateCountryList(countryData, globe, updateVisualizationFn) {
         
         if (enabledCountries.has(country.name)) {
             countryItem.classList.add('selected');
+            
+            // If a category is active, apply its color to countries in that category
+            if (activeCategory) {
+                const categoryData = categories[activeCategory];
+                if (categoryData && categoryData.countries.includes(country.name)) {
+                    countryItem.style.background = categoryData.color;
+                    countryItem.style.color = '#0F2133';
+                    const countSpan = countryItem.querySelector('.country-count');
+                    if (countSpan) {
+                        countSpan.style.color = '#0F2133';
+                    }
+                }
+            }
         }
         
         countryItem.addEventListener('click', (e) => {
@@ -187,9 +200,21 @@ export function populateCountryList(countryData, globe, updateVisualizationFn) {
             if (enabledCountries.has(country.name)) {
                 enabledCountries.delete(country.name);
                 countryItem.classList.remove('selected');
+                // Reset inline styles
+                countryItem.style.background = '';
+                countryItem.style.color = '';
             } else {
                 enabledCountries.add(country.name);
                 countryItem.classList.add('selected');
+                
+                // If a category is active, apply its color
+                if (activeCategory) {
+                    const categoryData = categories[activeCategory];
+                    if (categoryData && categoryData.countries.includes(country.name)) {
+                        countryItem.style.background = categoryData.color;
+                        countryItem.style.color = '#0F2133';
+                    }
+                }
                 
                 showCountryInfo(country);
                 

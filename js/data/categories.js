@@ -24,17 +24,17 @@ export const categories = {
     },
     'latin_america': {
         question: 'How strong is Superside\'s presence in Latin America?',
-        countries: ['Argentina', 'Brazil', 'Colombia', 'Costa Rica', 'Dominican Republic', 'Ecuador', 'El Salvador', 'Guatemala', 'Honduras', 'Mexico', 'Nicaragua', 'Panama', 'Paraguay', 'Peru', 'Uruguay', 'Venezuela'],
+        countries: ['Argentina', 'Brazil', 'Chile', 'Colombia', 'Costa Rica', 'Dominican Republic', 'Ecuador', 'El Salvador', 'Guatemala', 'Honduras', 'Mexico', 'Nicaragua', 'Panama', 'Paraguay', 'Peru', 'Uruguay', 'Venezuela'],
         color: categoryColors.latin_america
     },
     'europe': {
         question: 'Which European countries have Supersiders?',
-        countries: ['Armenia', 'Belarus', 'Bosnia & Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'France', 'Georgia', 'Germany', 'Greece', 'Hungary', 'Ireland', 'Italy', 'Latvia', 'Lithuania', 'Netherlands', 'North Macedonia', 'Norway', 'Poland', 'Portugal', 'Romania', 'Russian Federation', 'Serbia', 'Slovenia', 'Spain', 'Sweden', 'Turkey', 'Ukraine', 'United Kingdom'],
+        countries: ['Armenia', 'Bosnia & Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus', 'Denmark', 'France', 'Georgia', 'Germany', 'Greece', 'Hungary', 'Ireland', 'Italy', 'Latvia', 'Lithuania', 'Netherlands', 'North Macedonia', 'Norway', 'Poland', 'Portugal', 'Romania', 'Russian Federation', 'Serbia', 'Slovenia', 'Spain', 'Sweden', 'Turkey', 'Ukraine', 'United Kingdom'],
         color: categoryColors.europe
     },
     'africa': {
         question: 'Is Superside expanding across Africa?',
-        countries: ['Egypt', 'Ghana', 'Kenya', 'Libya', 'Mauritius', 'Nigeria', 'South Africa', 'Tunisia'],
+        countries: ['Egypt', 'Ghana', 'Kenya', 'Libya', 'Mauritius', 'Morocco', 'Nigeria', 'South Africa', 'Tunisia'],
         color: categoryColors.africa
     }
 };
