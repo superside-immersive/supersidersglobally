@@ -17,7 +17,6 @@ export function initSphereChart(canvasId = 'sphereChart') {
     }
 
     // Set canvas resolution to match container size
-    const container = canvas.parentElement;
     const size = canvasId === 'sphereChartOverlay' ? 500 : 320; // Larger size for overlay
     canvas.width = size;
     canvas.height = size;

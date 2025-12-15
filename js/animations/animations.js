@@ -349,7 +349,7 @@ function showAIPrompt(globe, countryData, connections, globeViz) {
         aiPromptContainer.style.display = 'none';
         aiProcessingContainer.classList.add('active');
         
-        // Start AI processing animation (3 seconds with 4 steps)
+        // Start AI processing animation (30% faster)
         startAIProcessing(() => {
             // After processing complete, hide AI overlay and show globe + UI
             console.log('AI Processing complete');
@@ -359,7 +359,7 @@ function showAIPrompt(globe, countryData, connections, globeViz) {
                 
                 // Start globe and UI reveal
                 revealGlobeAndUI(globe, countryData, connections, globeViz);
-            }, 500);
+            }, 350);
         });
     }, { once: true });
 }
@@ -369,10 +369,10 @@ function showAIPrompt(globe, countryData, connections, globeViz) {
  */
 function startAIProcessing(onComplete) {
     const steps = [
-        { id: 'aiStep1', duration: 700 },
-        { id: 'aiStep2', duration: 800 },
-        { id: 'aiStep3', duration: 700 },
-        { id: 'aiStep4', duration: 800 }
+        { id: 'aiStep1', duration: 490 },
+        { id: 'aiStep2', duration: 560 },
+        { id: 'aiStep3', duration: 490 },
+        { id: 'aiStep4', duration: 560 }
     ];
     
     let currentStep = 0;
@@ -395,7 +395,7 @@ function startAIProcessing(onComplete) {
             }, step.duration);
         } else {
             // All steps completed
-            setTimeout(onComplete, 300);
+            setTimeout(onComplete, 210);
         }
     }
     

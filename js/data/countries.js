@@ -9,7 +9,7 @@ export const countryData = [
     { name: "Colombia", count: 70, coordinates: { lat: 4.5709, lng: -74.2973 } },
     { name: "Spain", count: 44, coordinates: { lat: 40.4637, lng: -3.7492 } },
     { name: "Mexico", count: 43, coordinates: { lat: 23.6345, lng: -102.5528 } },
-    { name: "United States of America (USA)", count: 40, coordinates: { lat: 37.0902, lng: -95.7129 } },
+    { name: "USA", count: 40, coordinates: { lat: 37.0902, lng: -95.7129 } },
     { name: "Portugal", count: 34, coordinates: { lat: 39.3999, lng: -8.2245 } },
     { name: "Canada", count: 21, coordinates: { lat: 56.1304, lng: -106.3468 } },
     { name: "Costa Rica", count: 16, coordinates: { lat: 9.7489, lng: -83.7534 } },

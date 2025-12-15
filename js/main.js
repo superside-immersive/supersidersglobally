@@ -65,11 +65,12 @@ function toggleTimezoneView() {
     }
     
     // If hemisphere or languages view is active, deactivate them first
+    // Don't keep dark overlay - let it fade out and fade in again for visual feedback
     if (isHemisphereViewActive) {
-        deactivateHemisphereView();
+        deactivateHemisphereView(false); // Remove dark overlay
     }
     if (isLanguagesViewActive) {
-        deactivateLanguagesView();
+        deactivateLanguagesView(false); // Remove dark overlay
     }
     
     const overlay = document.getElementById('timezoneOverlay');
@@ -151,8 +152,9 @@ function toggleTimezoneView() {
 
 /**
  * Deactivate timezone view (helper function)
+ * @param {boolean} keepDarkOverlay - If true, don't remove the dark overlay (for transitioning between views)
  */
-function deactivateTimezoneView() {
+function deactivateTimezoneView(keepDarkOverlay = false) {
     const overlay = document.getElementById('timezoneOverlay');
     const globeDarkOverlay = document.getElementById('globeDarkOverlay');
     const toggleBtn = document.getElementById('timezoneToggle');
@@ -164,8 +166,10 @@ function deactivateTimezoneView() {
     isTimezoneViewActive = false;
     window.isTimezoneViewActive = false;
     
-    // Immediately remove dark overlay (no animation when switching)
-    globeDarkOverlay.classList.remove('active');
+    // Only remove dark overlay if not transitioning to another view
+    if (!keepDarkOverlay) {
+        globeDarkOverlay.classList.remove('active');
+    }
     
     // Immediately hide overlay and clear content
     overlay.style.display = 'none';
@@ -177,16 +181,19 @@ function deactivateTimezoneView() {
         container.innerHTML = '';
     }
     
-    // Restore camera position
-    if (originalCameraPosition) {
-        myGlobe.pointOfView(originalCameraPosition, 1000);
+    // Only restore globe state if NOT transitioning to another overlay view
+    if (!keepDarkOverlay) {
+        // Restore camera position
+        if (originalCameraPosition) {
+            myGlobe.pointOfView(originalCameraPosition, 1000);
+        }
+        
+        // Resume auto-rotation
+        myGlobe.controls().autoRotate = true;
+        
+        // Restore points and arcs
+        updateVisualization();
     }
-    
-    // Resume auto-rotation
-    myGlobe.controls().autoRotate = true;
-    
-    // Restore points and arcs
-    updateVisualization();
     
     // Update button style
     toggleBtn.classList.remove('active');
@@ -209,11 +216,12 @@ function toggleHemisphereView() {
     }
     
     // If timezone or languages view is active, deactivate them first
+    // Don't keep dark overlay - let it fade out and fade in again for visual feedback
     if (isTimezoneViewActive) {
-        deactivateTimezoneView();
+        deactivateTimezoneView(false); // Remove dark overlay
     }
     if (isLanguagesViewActive) {
-        deactivateLanguagesView();
+        deactivateLanguagesView(false); // Remove dark overlay
     }
     
     const overlay = document.getElementById('hemisphereOverlay');
@@ -304,13 +312,14 @@ function toggleHemisphereView() {
 
 /**
  * Deactivate hemisphere view (helper function)
+ * @param {boolean} keepDarkOverlay - If true, don't remove the dark overlay (for transitioning between views)
  */
-function deactivateHemisphereView() {
+function deactivateHemisphereView(keepDarkOverlay = false) {
     const overlay = document.getElementById('hemisphereOverlay');
     const globeDarkOverlay = document.getElementById('globeDarkOverlay');
     const toggleBtn = document.getElementById('hemisphereToggle');
     
-    console.log('Deactivating hemisphere view...');
+    console.log('Deactivating hemisphere view...', { keepDarkOverlay });
     
     // Cancel all pending timeouts
     pendingHemisphereTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
@@ -319,8 +328,10 @@ function deactivateHemisphereView() {
     isHemisphereViewActive = false;
     window.isHemisphereViewActive = false;
     
-    // Immediately remove dark overlay (no animation when switching)
-    globeDarkOverlay.classList.remove('active');
+    // Only remove dark overlay if not transitioning to another view
+    if (!keepDarkOverlay) {
+        globeDarkOverlay.classList.remove('active');
+    }
     
     // Destroy Chart.js instance before removing container
     try {
@@ -354,16 +365,19 @@ function deactivateHemisphereView() {
         console.error('Error recreating canvas:', e);
     }
     
-    // Restore camera position
-    if (originalCameraPosition) {
-        myGlobe.pointOfView(originalCameraPosition, 1000);
+    // Only restore globe state if NOT transitioning to another overlay view
+    if (!keepDarkOverlay) {
+        // Restore camera position
+        if (originalCameraPosition) {
+            myGlobe.pointOfView(originalCameraPosition, 1000);
+        }
+        
+        // Resume auto-rotation
+        myGlobe.controls().autoRotate = true;
+        
+        // Restore points and arcs
+        updateVisualization();
     }
-    
-    // Resume auto-rotation
-    myGlobe.controls().autoRotate = true;
-    
-    // Restore points and arcs
-    updateVisualization();
     
     // Update button style
     toggleBtn.classList.remove('active');
@@ -388,11 +402,12 @@ function toggleLanguagesView() {
     }
     
     // If timezone or hemisphere view is active, deactivate them first
+    // Don't keep dark overlay - let it fade out and fade in again for visual feedback
     if (isTimezoneViewActive) {
-        deactivateTimezoneView();
+        deactivateTimezoneView(false); // Remove dark overlay
     }
     if (isHemisphereViewActive) {
-        deactivateHemisphereView();
+        deactivateHemisphereView(false); // Remove dark overlay
     }
     
     const overlay = document.getElementById('languagesOverlay');
@@ -480,13 +495,14 @@ function toggleLanguagesView() {
 
 /**
  * Deactivate languages view (helper function)
+ * @param {boolean} keepDarkOverlay - If true, don't remove the dark overlay (for transitioning between views)
  */
-function deactivateLanguagesView() {
+function deactivateLanguagesView(keepDarkOverlay = false) {
     const overlay = document.getElementById('languagesOverlay');
     const globeDarkOverlay = document.getElementById('globeDarkOverlay');
     const toggleBtn = document.getElementById('languagesToggle');
     
-    console.log('Deactivating languages view...');
+    console.log('Deactivating languages view...', { keepDarkOverlay });
     
     // Cancel all pending timeouts
     pendingLanguagesTimeouts.forEach(timeoutId => clearTimeout(timeoutId));
@@ -495,18 +511,122 @@ function deactivateLanguagesView() {
     isLanguagesViewActive = false;
     window.isLanguagesViewActive = false;
     
-    // Immediately remove dark overlay
-    globeDarkOverlay.classList.remove('active');
-    
-    // Clear the sunburst chart
-    const container = document.getElementById('languagesChartOverlay');
-    if (container) {
-        container.innerHTML = '';
+    // If keeping dark overlay (transitioning to another view), skip collapse animation and hide immediately
+    if (keepDarkOverlay) {
+        // Just hide the overlay immediately without animation
+        overlay.style.display = 'none';
+        overlay.classList.remove('fade-in', 'fade-out');
+        
+        // Clear the sunburst chart
+        const container = document.getElementById('languagesChartOverlay');
+        if (container) {
+            container.innerHTML = '';
+        }
+        
+        // Update button style
+        toggleBtn.classList.remove('active');
+        toggleBtn.style.background = '';
+        toggleBtn.style.borderColor = '';
+        
+        console.log('Languages view deactivated (quick transition)');
+        return;
     }
     
-    // Immediately hide overlay
-    overlay.style.display = 'none';
-    overlay.classList.remove('fade-in', 'fade-out');
+    // Full collapse animation when not transitioning to another view
+    // Animate out the sunburst arcs - collapse toward center (reverse of entry)
+    const container = document.getElementById('languagesChartOverlay');
+    if (container) {
+        const svg = container.querySelector('svg');
+        if (svg) {
+            const arcs = svg.querySelectorAll('.sunburst-arc');
+            const labels = svg.querySelectorAll('.arc-label');
+            const centerText = svg.querySelector('.center-text');
+            
+            // Fade out labels first
+            labels.forEach((label, i) => {
+                label.style.transition = 'opacity 0.2s ease-out';
+                label.style.opacity = '0';
+            });
+            
+            // Collapse arcs from outer to inner using D3 transitions
+            // Depth 3 (countries) first, then depth 2 (languages), then depth 1 (English)
+            arcs.forEach((arc) => {
+                const depth = arc.getAttribute('data-depth') || arc.__data__?.depth || 1;
+                const depthNum = parseInt(depth);
+                
+                // Outer rings collapse first (depth 3 -> 2 -> 1)
+                const baseDelay = (3 - depthNum) * 150;
+                // Add small variation based on arc position
+                const arcData = arc.__data__;
+                const positionOffset = arcData ? (arcData.x0 / (2 * Math.PI)) * 100 : 0;
+                const delay = baseDelay + positionOffset;
+                
+                setTimeout(() => {
+                    // Use D3 to animate the arc collapsing
+                    if (arcData) {
+                        const innerR = depthNum === 1 ? 80 : 
+                                       depthNum === 2 ? 80 + 45 : 
+                                       80 + 45 + 70;
+                        
+                        d3.select(arc)
+                            .transition()
+                            .duration(400)
+                            .ease(d3.easeCubicIn)
+                            .attrTween("d", function() {
+                                const currentOuterR = depthNum === 1 ? 80 + 45 : 
+                                                      depthNum === 2 ? 80 + 45 + 70 : 
+                                                      80 + 45 + 70 + 60;
+                                const interpolateRadius = d3.interpolate(currentOuterR, innerR);
+                                return function(t) {
+                                    return d3.arc()
+                                        .startAngle(arcData.x0)
+                                        .endAngle(arcData.x1)
+                                        .innerRadius(innerR)
+                                        .outerRadius(interpolateRadius(t))
+                                        .padAngle(0.001)
+                                        .cornerRadius(1)(arcData);
+                                };
+                            })
+                            .style("opacity", 0);
+                    } else {
+                        // Fallback for arcs without data
+                        arc.style.transition = 'opacity 0.3s ease-out';
+                        arc.style.opacity = '0';
+                    }
+                }, delay);
+            });
+            
+            // Finally fade out center
+            if (centerText) {
+                setTimeout(() => {
+                    centerText.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                    centerText.style.opacity = '0';
+                    centerText.style.transform = 'scale(0.9)';
+                }, 500);
+            }
+        }
+    }
+    
+    // Start fading dark overlay after arcs start collapsing
+    setTimeout(() => {
+        globeDarkOverlay.classList.remove('active');
+    }, 300);
+    
+    // Add fade-out class for overlay animation
+    overlay.classList.remove('fade-in');
+    overlay.classList.add('fade-out');
+    
+    // Wait for animations to complete before hiding
+    setTimeout(() => {
+        // Clear the sunburst chart
+        if (container) {
+            container.innerHTML = '';
+        }
+        
+        // Hide overlay
+        overlay.style.display = 'none';
+        overlay.classList.remove('fade-out');
+    }, 900);
     
     // Restore camera position
     if (originalCameraPosition) {
@@ -516,8 +636,10 @@ function deactivateLanguagesView() {
     // Resume auto-rotation
     myGlobe.controls().autoRotate = true;
     
-    // Restore points and arcs
-    updateVisualization();
+    // Restore points and arcs after animation
+    setTimeout(() => {
+        updateVisualization();
+    }, 500);
     
     // Update button style
     toggleBtn.classList.remove('active');

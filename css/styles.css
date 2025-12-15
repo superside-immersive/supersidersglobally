@@ -489,8 +489,8 @@ body {
 /* Hemisphere Insight Box */
 .hemisphere-insight-box {
     position: absolute;
-    bottom: 8%;
-    right: 3%;
+    bottom: 3%;
+    right: 8%;
     max-width: 280px;
     background: rgba(0, 0, 0, 0.88);
     border: 2px solid #86F5AF;
@@ -828,8 +828,10 @@ body {
 }
 
 #radialChartOverlay {
-    width: 100%;
-    height: 100%;
+    width: 800px;
+    height: 800px;
+    max-width: 90vh;
+    max-height: 90vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -837,8 +839,8 @@ body {
 }
 
 #radialChartOverlay svg {
-    max-width: 800px;
-    max-height: 800px;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 /* Timezone toggle button */
@@ -908,7 +910,7 @@ body {
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 999;
+    z-index: 50;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -934,7 +936,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: auto;
+    pointer-events: none;
 }
 
 .hemisphere-sphere-wrapper {
@@ -949,6 +951,7 @@ body {
     overflow: hidden;
     border: 1px solid rgba(134, 245, 175, 0.2);
     background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.05) 0%, transparent 50%);
+    pointer-events: auto;
 }
 
 .hemisphere-sphere-wrapper canvas {
@@ -1310,23 +1313,27 @@ body {
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 999;
+    z-index: 50;
     display: flex;
     justify-content: center;
     align-items: center;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0.95);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .languages-overlay.fade-in {
     opacity: 1;
+    transform: scale(1);
     pointer-events: none;
 }
 
 .languages-overlay.fade-out {
     opacity: 0;
+    transform: scale(0.9);
     pointer-events: none;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .languages-container {
@@ -1336,12 +1343,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: auto;
+    pointer-events: none;
 }
 
 #languagesChartOverlay {
-    width: 100%;
-    height: 100%;
+    width: 800px;
+    height: 800px;
+    max-width: 90vh;
+    max-height: 90vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1405,11 +1414,19 @@ body {
     box-shadow: 0 8px 20px rgba(134, 245, 175, 0.2);
     z-index: 35;
     opacity: 0;
-    transition: opacity 0.6s ease 0.4s;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease 0.4s, transform 0.6s ease 0.4s;
 }
 
 .languages-overlay.fade-in .languages-insight-box {
     opacity: 1;
+    transform: translateY(0);
+}
+
+.languages-overlay.fade-out .languages-insight-box {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .languages-insight-box .insight-title {

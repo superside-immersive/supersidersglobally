@@ -3,6 +3,8 @@
  * Manages custom tooltip display and positioning
  */
 
+import { getCountryFlag } from '../data/country-flags.js';
+
 let currentMouseX = 0;
 let currentMouseY = 0;
 let tooltipTimeout = null;
@@ -61,7 +63,17 @@ export function showTooltip(point) {
     const countEl = document.getElementById('tooltipCount');
     const coordsEl = document.getElementById('tooltipCoords');
     
-    if (nameEl) nameEl.textContent = point.name.toUpperCase();
+    // Get flag emoji for this country
+    const flag = getCountryFlag(point.name);
+    
+    if (nameEl) {
+        // Country name on first line
+        nameEl.innerHTML = point.name.toUpperCase();
+        // Add flag below in a new line with larger size
+        if (flag) {
+            nameEl.innerHTML += `<br><span style="font-size: 32px; line-height: 1.2;">${flag}</span>`;
+        }
+    }
     if (countEl) countEl.textContent = `${point.count} SUPERSIDERS`;
     if (coordsEl) coordsEl.textContent = `Lat: ${point.coordinates.lat.toFixed(2)}°, Lng: ${point.coordinates.lng.toFixed(2)}°`;
     

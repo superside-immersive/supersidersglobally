@@ -56,6 +56,19 @@ export const radialData = [
 ];
 
 // Datos del gráfico de esfera (hemisferios)
+// ==============================================================================
+// CRITICAL: HEMISPHERE DATA - DO NOT MODIFY WITHOUT UPDATING ALL REFERENCES
+// ==============================================================================
+// North: 456 supersiders = 54.5% of total (456/837)
+// South: 381 supersiders = 45.5% of total (381/837)
+// Total: 837 supersiders
+//
+// These percentages are calculated dynamically in sphere-chart.js
+// If you change these numbers, the percentages will update automatically
+// But you MUST also update the HTML labels in:
+//   - index.html (northLabelOverlay, southLabelOverlay)
+//   - viz2.html (northLabel, southLabel)
+// ==============================================================================
 export const hemisphereData = {
     norte: 456,
     sur: 381,

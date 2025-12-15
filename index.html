@@ -191,13 +191,20 @@
             </div>
             
             <!-- External Labels for Overlay -->
+            <!-- ================================================================== -->
+            <!-- CRITICAL: These percentages MUST match the actual data:            -->
+            <!-- North: 456 people = 54.5% (456/837)                                -->
+            <!-- South: 381 people = 45.5% (381/837)                                -->
+            <!-- Total: 837 supersiders                                             -->
+            <!-- DO NOT modify these values without updating the source data        -->
+            <!-- ================================================================== -->
             <div id="northLabelOverlay" class="sphere-label-box" style="top: 20%; right: -18%;">
-                <div class="text-[#A1D4FF] text-3xl font-black font-mono" style="color: #A1D4FF; font-size: 28px; font-weight: 900;">456</div>
+                <div class="text-[#A1D4FF] text-3xl font-black font-mono" style="color: #A1D4FF; font-size: 28px; font-weight: 900;">456 <span style="font-size: 16px; opacity: 0.8;">(54.5%)</span></div>
                 <div style="color: #4A9B5E; font-size: 10px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">People North</div>
                 <div class="sphere-description">Summer vacation shield</div>
             </div>
             <div id="southLabelOverlay" class="sphere-label-box" style="bottom: 20%; left: -18%;">
-                <div style="color: #D8FF85; font-size: 28px; font-weight: 900;">381</div>
+                <div style="color: #D8FF85; font-size: 28px; font-weight: 900;">381 <span style="font-size: 16px; opacity: 0.8;">(45.5%)</span></div>
                 <div style="color: #4A9B5E; font-size: 10px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">People South</div>
                 <div class="sphere-description">Winter vacation shield</div>
             </div>
@@ -210,9 +217,9 @@
             <div id="languagesChartOverlay"></div>
             <!-- Languages Insight Box -->
             <div class="languages-insight-box">
-                <div class="insight-title">Global Communication</div>
+                <div class="insight-title">Cultural Diversity</div>
                 <div class="insight-text">
-                    All Supersiders speak English as our common language. Beyond that, our team brings a rich tapestry of native languages, enabling authentic connections with diverse markets worldwide.
+                    All Supersiders speak English as our common language. Our diversity of languages broadens our cultural and creative perspectives, enriching every project we touch.
                 </div>
             </div>
         </div>
@@ -228,7 +235,7 @@
     
     <!-- Category Panel -->
     <div class="category-panel ai-hidden" id="categoryPanel">
-        <h3>Explore Questions</h3>
+        <h3>Explore Insights</h3>
         <div class="category-list" id="categoryList">
             <!-- Categories will be populated here -->
         </div>

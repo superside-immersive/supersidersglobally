@@ -12,7 +12,7 @@ export const countryLanguages = {
     "Colombia": ["Spanish"],
     "Spain": ["Spanish"],
     "Mexico": ["Spanish"],
-    "United States of America (USA)": ["English"],
+    "USA": ["English"],
     "Portugal": ["Portuguese"],
     "Canada": ["English"],
     "Costa Rica": ["Spanish"],
@@ -135,12 +135,41 @@ export function buildLanguageHierarchy(countryData) {
     // Get English stats
     const englishStats = languageStats["English"];
     
+    // Get countries where English is the PRIMARY language (native English speakers)
+    const englishOnlyCountries = countryData.filter(country => {
+        const langs = countryLanguages[country.name] || [];
+        return langs.includes("English");
+    });
+    
+    console.log('English-speaking countries found:', englishOnlyCountries.map(c => `${c.name} (${c.count})`));
+    
     // Get other major languages (excluding English)
     const otherLanguages = Object.values(languageStats)
         .filter(lang => lang.name !== "English")
         .sort((a, b) => b.totalPeople - a.totalPeople);
     
-    // Build hierarchy: LANGUAGES (center) -> English (ring 1) -> Other Languages (ring 2+)
+    // Build hierarchy: LANGUAGES (center) -> English (ring 1) -> [English Countries + Other Languages] (ring 2) -> Countries (ring 3)
+    // English countries appear as blocks but WITHOUT text labels (hideLabel: true)
+    const englishChildren = [
+        // First add English-native countries as a group (no labels shown)
+        ...englishOnlyCountries.map(c => ({
+            name: c.name,
+            value: c.count,
+            isEnglishNative: true,
+            hideLabel: true  // Don't show label in ring, only on hover
+        })),
+        // Then add other languages
+        ...otherLanguages.map(lang => ({
+            name: lang.name,
+            totalPeople: lang.totalPeople,
+            value: lang.totalPeople,
+            children: lang.countries.map(c => ({
+                name: c.name,
+                value: c.count
+            }))
+        }))
+    ];
+    
     return {
         name: "LANGUAGES",
         value: 0, // Center has no value
@@ -150,15 +179,7 @@ export function buildLanguageHierarchy(countryData) {
                 name: "English",
                 totalPeople: englishStats.totalPeople,
                 value: englishStats.totalPeople,
-                children: otherLanguages.map(lang => ({
-                    name: lang.name,
-                    totalPeople: lang.totalPeople,
-                    value: lang.totalPeople,
-                    children: lang.countries.map(c => ({
-                        name: c.name,
-                        value: c.count
-                    }))
-                }))
+                children: englishChildren
             }
         ]
     };

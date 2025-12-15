@@ -31,11 +31,11 @@ export function initSunburstChart(containerId = 'languagesChartOverlay') {
     const height = 800;
     currentRadius = Math.min(width, height) / 2 - 10;
     
-    // Ring configuration - thinner rings for more elegant look
+    // Ring configuration - wider rings for better text fit
     const centerRadius = 80;
-    const englishRingWidth = 45;
-    const languageRingWidth = 70;
-    const countryRingWidth = 60;
+    const englishRingWidth = 50;
+    const languageRingWidth = 90;
+    const countryRingWidth = 65;
 
     // Build hierarchical data
     const hierarchyData = buildLanguageHierarchy(countryData);
@@ -105,8 +105,8 @@ export function initSunburstChart(containerId = 'languagesChartOverlay') {
     centerGroup.append("text")
         .attr("class", "center-language")
         .attr("text-anchor", "middle")
-        .attr("dy", "-0.2em")
-        .style("font-size", "20px")
+        .attr("dy", "-1.2em")
+        .style("font-size", "14px")
         .style("font-weight", "800")
         .style("fill", "#86F5AF")
         .style("letter-spacing", "2px")
@@ -117,8 +117,8 @@ export function initSunburstChart(containerId = 'languagesChartOverlay') {
     centerGroup.append("text")
         .attr("class", "center-count")
         .attr("text-anchor", "middle")
-        .attr("dy", "1.8em")
-        .style("font-size", "38px")
+        .attr("dy", "0.3em")
+        .style("font-size", "28px")
         .style("font-weight", "900")
         .style("fill", "#DAFF87")
         .text(totalSupersiders);
@@ -127,8 +127,8 @@ export function initSunburstChart(containerId = 'languagesChartOverlay') {
     centerGroup.append("text")
         .attr("class", "center-label")
         .attr("text-anchor", "middle")
-        .attr("dy", "3.2em")
-        .style("font-size", "12px")
+        .attr("dy", "2.4em")
+        .style("font-size", "9px")
         .style("font-weight", "600")
         .style("fill", "rgba(134, 245, 175, 0.7)")
         .style("text-transform", "uppercase")
@@ -162,24 +162,58 @@ export function initSunburstChart(containerId = 'languagesChartOverlay') {
         }
     });
 
-    // Create paths with animation - start from final position but scale width
+    // Create arc generator that can be scaled for animation
+    // We'll create a custom arc for collapsed state (inner radius = outer radius)
+    function createCollapsedArc(d) {
+        const innerR = currentArc.innerRadius()(d);
+        return d3.arc()
+            .startAngle(d.x0)
+            .endAngle(d.x1)
+            .innerRadius(innerR)
+            .outerRadius(innerR) // Collapsed: outer = inner
+            .padAngle(0.001)
+            .cornerRadius(1)(d);
+    }
+
+    // Create paths with animation - start collapsed (zero width)
     const paths = g.selectAll("path.sunburst-arc")
         .data(descendants)
         .enter()
         .append("path")
-        .attr("class", "sunburst-arc")
-        .attr("d", currentArc)
+        .attr("class", d => `sunburst-arc depth-${d.depth}`)
+        .attr("data-depth", d => d.depth)
+        .attr("d", d => createCollapsedArc(d)) // Start collapsed
         .style("fill", d => getArcColor(d))
         .style("stroke", "#000")
         .style("stroke-width", "0.5px")
         .style("cursor", "pointer")
         .style("opacity", 0);
 
-    // Animate arcs appearing - elegant scale from final position
+    // Animate arcs expanding from center with staggered timing per section
     paths.transition()
-        .delay((d, i) => 200 + d.depth * 200)
-        .duration(600)
+        .delay((d, i) => {
+            // Base delay by depth (ring level)
+            const depthDelay = d.depth * 250;
+            // Add small random offset for each section in same ring (0-100ms)
+            const sectionOffset = (d.x0 / (2 * Math.PI)) * 150;
+            return 150 + depthDelay + sectionOffset;
+        })
+        .duration(500)
         .ease(d3.easeCubicOut)
+        .attrTween("d", function(d) {
+            const innerR = currentArc.innerRadius()(d);
+            const outerR = currentArc.outerRadius()(d);
+            const interpolateRadius = d3.interpolate(innerR, outerR);
+            return function(t) {
+                return d3.arc()
+                    .startAngle(d.x0)
+                    .endAngle(d.x1)
+                    .innerRadius(innerR)
+                    .outerRadius(interpolateRadius(t))
+                    .padAngle(0.001)
+                    .cornerRadius(1)(d);
+            };
+        })
         .style("opacity", 1);
 
     // Hover interactions with debounce to prevent jumping between arcs
@@ -212,10 +246,16 @@ export function initSunburstChart(containerId = 'languagesChartOverlay') {
         });
 
     // Add labels for English ring (depth 1) and major languages (depth 2)
+    // Don't show labels for English-native countries (hideLabel: true)
     const labels = g.selectAll("text.arc-label")
         .data(descendants.filter(d => {
             if (d.depth === 1) return true; // Always show English
-            if (d.depth === 2) return (d.x1 - d.x0) > 0.15; // Only larger language arcs
+            if (d.depth === 2) {
+                // Skip if it's an English-native country (has hideLabel flag)
+                if (d.data.hideLabel) return false;
+                // Only show larger language arcs
+                return (d.x1 - d.x0) > 0.15;
+            }
             return false;
         }))
         .enter()
@@ -271,8 +311,15 @@ function getArcColor(d) {
         return "#86F5AF";
     }
     
-    // Depth 2: Other languages - use language colors
+    // Depth 2: Could be other languages OR English-native countries
     if (d.depth === 2) {
+        // Check if this is an English-native country (no children = it's a country)
+        if (d.data.isEnglishNative || !d.children || d.children.length === 0) {
+            // English-native country - darker green
+            const englishColor = d3.color("#86F5AF");
+            return englishColor.darker(0.8).toString();
+        }
+        // Other language - use language color
         return getLanguageColor(d.data.name);
     }
     
@@ -289,40 +336,78 @@ function getArcColor(d) {
  * Update center text on hover
  */
 function updateCenterText(centerGroup, d) {
-    // Get actual people count from original data
-    let actualCount;
-    let label1, label2;
-    let labelColor;
-    
-    if (d.depth === 1) {
-        // English ring
-        label1 = "ENGLISH";
-        actualCount = d.data.totalPeople || 837;
-        label2 = "EVERYONE";
-        labelColor = "#86F5AF"; // Superside green for English
-    } else if (d.depth === 2) {
-        // Other languages
-        label1 = d.data.name.toUpperCase();
-        actualCount = d.data.totalPeople || d.data.value;
-        label2 = "SPEAKERS";
-        labelColor = getLanguageColor(d.data.name);
-    } else if (d.depth === 3) {
-        // Countries
-        label1 = d.parent.data.name.toUpperCase();
-        actualCount = d.data.value;
-        label2 = d.data.name;
-        labelColor = getLanguageColor(d.parent.data.name);
-    }
+    // Import flag function
+    import('../data/country-flags.js').then(module => {
+        const getCountryFlag = module.getCountryFlag;
+        
+        // Get actual people count from original data
+        let actualCount;
+        let label1, label2, flag;
+        let labelColor;
+        
+        if (d.depth === 1) {
+            // English ring
+            label1 = "ENGLISH";
+            actualCount = d.data.totalPeople || 837;
+            label2 = "EVERYONE";
+            labelColor = "#86F5AF"; // Superside green for English
+            flag = null;
+        } else if (d.depth === 2) {
+            // Check if this is an English-native country or another language
+            if (d.data.isEnglishNative || !d.children || d.children.length === 0) {
+                // English-native country
+                label1 = "ENGLISH";
+                actualCount = d.data.value;
+                label2 = d.data.name;
+                labelColor = "#86F5AF";
+                flag = getCountryFlag(d.data.name);
+            } else {
+                // Other language
+                label1 = d.data.name.toUpperCase();
+                actualCount = d.data.totalPeople || d.data.value;
+                label2 = "SPEAKERS";
+                labelColor = getLanguageColor(d.data.name);
+                flag = null;
+            }
+        } else if (d.depth === 3) {
+            // Countries of other languages
+            label1 = d.parent.data.name.toUpperCase();
+            actualCount = d.data.value;
+            label2 = d.data.name;
+            labelColor = getLanguageColor(d.parent.data.name);
+            flag = getCountryFlag(d.data.name);
+        }
 
-    centerGroup.select(".center-language")
-        .text(label1)
-        .style("fill", labelColor);
+        centerGroup.select(".center-language")
+            .text(label1)
+            .style("fill", labelColor);
 
-    centerGroup.select(".center-count")
-        .text(actualCount);
+        centerGroup.select(".center-count")
+            .text(actualCount);
 
-    centerGroup.select(".center-label")
-        .text(label2);
+        // Update label with country name and flag below it
+        const labelEl = centerGroup.select(".center-label");
+        if (flag) {
+            // Country name
+            labelEl.text(label2);
+            
+            // Remove any existing flag
+            centerGroup.selectAll(".center-flag").remove();
+            
+            // Add flag emoji below
+            centerGroup.append("text")
+                .attr("class", "center-flag")
+                .attr("text-anchor", "middle")
+                .attr("dy", "4em")
+                .style("font-size", "32px")
+                .style("pointer-events", "none")
+                .text(flag);
+        } else {
+            labelEl.text(label2);
+            // Remove flag if it exists
+            centerGroup.selectAll(".center-flag").remove();
+        }
+    });
 }
 
 /**
@@ -338,6 +423,9 @@ function resetCenterText(centerGroup, totalSupersiders) {
 
     centerGroup.select(".center-label")
         .text("SUPERSIDERS");
+    
+    // Remove any flag
+    centerGroup.selectAll(".center-flag").remove();
 }
 
 /**
