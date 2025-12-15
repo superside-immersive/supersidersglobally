@@ -101,15 +101,36 @@ export function populateCategoryList(countryData, globe, updateVisualizationFn) 
         }
         
         categoryItem.addEventListener('click', (e) => {
-            // Immediately deactivate timezone, hemisphere or languages view if active
-            if (window.isTimezoneViewActive && window.deactivateTimezoneView) {
-                window.deactivateTimezoneView();
+            console.log('Category clicked, checking views to deactivate...');
+            
+            // Force deactivate languages view
+            if (window.isLanguagesViewActive) {
+                console.log('Deactivating languages view from category click');
+                window.isLanguagesViewActive = false;
+                const langOverlay = document.getElementById('languagesOverlay');
+                const globeDark = document.getElementById('globeDarkOverlay');
+                const langContainer = document.getElementById('languagesChartOverlay');
+                if (langOverlay) {
+                    langOverlay.style.display = 'none';
+                    langOverlay.classList.remove('fade-in', 'fade-out');
+                }
+                if (globeDark) globeDark.classList.remove('active');
+                if (langContainer) langContainer.innerHTML = '';
+                if (window.deactivateLanguagesView) window.deactivateLanguagesView();
             }
-            if (window.isHemisphereViewActive && window.deactivateHemisphereView) {
-                window.deactivateHemisphereView();
+            
+            // Force deactivate timezone view
+            if (window.isTimezoneViewActive) {
+                console.log('Deactivating timezone view from category click');
+                window.isTimezoneViewActive = false;
+                if (window.deactivateTimezoneView) window.deactivateTimezoneView();
             }
-            if (window.isLanguagesViewActive && window.deactivateLanguagesView) {
-                window.deactivateLanguagesView();
+            
+            // Force deactivate hemisphere view
+            if (window.isHemisphereViewActive) {
+                console.log('Deactivating hemisphere view from category click');
+                window.isHemisphereViewActive = false;
+                if (window.deactivateHemisphereView) window.deactivateHemisphereView();
             }
             
             // Also deactivate the toggle buttons

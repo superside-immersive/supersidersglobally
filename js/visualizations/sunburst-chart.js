@@ -33,7 +33,7 @@ export function initSunburstChart(containerId = 'languagesChartOverlay') {
     
     // Ring configuration - thinner rings for more elegant look
     const centerRadius = 80;
-    const englishRingWidth = 60;
+    const englishRingWidth = 45;
     const languageRingWidth = 70;
     const countryRingWidth = 60;
 
@@ -222,13 +222,17 @@ export function initSunburstChart(containerId = 'languagesChartOverlay') {
         .append("text")
         .attr("class", "arc-label")
         .attr("transform", d => {
-            const angle = (d.x0 + d.x1) / 2;
-            let radius;
+            // For English ring (depth 1), position on the left side (at 270 degrees / 3π/2)
             if (d.depth === 1) {
-                radius = centerRadius + englishRingWidth / 2;
-            } else {
-                radius = centerRadius + englishRingWidth + languageRingWidth / 2;
+                const angle = Math.PI * 1.5; // 270 degrees = left side
+                const radius = centerRadius + englishRingWidth / 2;
+                const x = radius * Math.sin(angle);
+                const y = -radius * Math.cos(angle);
+                return `translate(${x},${y}) rotate(0)`;
             }
+            // Other languages - keep original positioning
+            const angle = (d.x0 + d.x1) / 2;
+            const radius = centerRadius + englishRingWidth + languageRingWidth / 2;
             const x = radius * Math.sin(angle);
             const y = -radius * Math.cos(angle);
             const rotation = (angle * 180 / Math.PI) - 90;
@@ -238,7 +242,7 @@ export function initSunburstChart(containerId = 'languagesChartOverlay') {
         })
         .attr("text-anchor", "middle")
         .attr("dy", "0.35em")
-        .style("font-size", d => d.depth === 1 ? "16px" : "12px")
+        .style("font-size", d => d.depth === 1 ? "11px" : "12px")
         .style("font-weight", "800")
         .style("fill", "#FFF")
         .style("text-shadow", "none")
@@ -288,26 +292,31 @@ function updateCenterText(centerGroup, d) {
     // Get actual people count from original data
     let actualCount;
     let label1, label2;
+    let labelColor;
     
     if (d.depth === 1) {
         // English ring
         label1 = "ENGLISH";
         actualCount = d.data.totalPeople || 837;
         label2 = "EVERYONE";
+        labelColor = "#86F5AF"; // Superside green for English
     } else if (d.depth === 2) {
         // Other languages
         label1 = d.data.name.toUpperCase();
         actualCount = d.data.totalPeople || d.data.value;
         label2 = "SPEAKERS";
+        labelColor = getLanguageColor(d.data.name);
     } else if (d.depth === 3) {
         // Countries
         label1 = d.parent.data.name.toUpperCase();
         actualCount = d.data.value;
         label2 = d.data.name;
+        labelColor = getLanguageColor(d.parent.data.name);
     }
 
     centerGroup.select(".center-language")
-        .text(label1);
+        .text(label1)
+        .style("fill", labelColor);
 
     centerGroup.select(".center-count")
         .text(actualCount);
@@ -321,7 +330,8 @@ function updateCenterText(centerGroup, d) {
  */
 function resetCenterText(centerGroup, totalSupersiders) {
     centerGroup.select(".center-language")
-        .text("LANGUAGES");
+        .text("LANGUAGES")
+        .style("fill", "#86F5AF");
 
     centerGroup.select(".center-count")
         .text(totalSupersiders);
