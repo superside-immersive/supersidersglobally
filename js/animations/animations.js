@@ -304,8 +304,17 @@ export function initializeLoadingSequence(globe, countryData, connections) {
     setTimeout(() => {
         console.log('Logo animation complete (0.8s + 0.2s hold = 1s) - starting fade out');
         
-        // Empezar transición INSTANTÁNEAMENTE
-        startTransition();
+        // SECUENCIA: 1) Fade out logo (0.5s) → 2) Show AI prompt → Wait for user interaction
+        console.log('Step 1: Fade out loading screen (0.5s)');
+        loadingScreen.classList.add('fade-out');
+        
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            
+            // Show AI prompt overlay
+            console.log('Step 2: Showing AI prompt');
+            showAIPrompt(globe, countryData, connections, globeViz);
+        }, 500); // Match CSS animation time (0.5s)
         
         // Globe carga en background
         if (!globeReady) {
@@ -318,47 +327,125 @@ export function initializeLoadingSequence(globe, countryData, connections) {
             }, 100);
         }
     }, 1000); // Logo completa a 1s
+}
+
+/**
+ * Show AI Prompt and handle processing animation
+ */
+function showAIPrompt(globe, countryData, connections, globeViz) {
+    const aiOverlay = document.getElementById('aiOverlay');
+    const aiPromptContainer = document.getElementById('aiPromptContainer');
+    const aiProcessingContainer = document.getElementById('aiProcessingContainer');
+    const aiPromptButton = document.getElementById('aiPromptButton');
     
-    function startTransition() {
-        // SECUENCIA: 1) Fade out logo (0.5s) → 2) Fade in globe (1.5s) → 3) Fade in interfaz (después del globe)
-        console.log('Step 1: Fade out loading screen (0.5s)');
-        loadingScreen.classList.add('fade-out');
+    // Show overlay with prompt
+    aiOverlay.classList.add('active');
+    
+    // Handle button click
+    aiPromptButton.addEventListener('click', () => {
+        console.log('AI Processing started');
+        
+        // Hide prompt, show processing animation
+        aiPromptContainer.style.display = 'none';
+        aiProcessingContainer.classList.add('active');
+        
+        // Start AI processing animation (3 seconds with 4 steps)
+        startAIProcessing(() => {
+            // After processing complete, hide AI overlay and show globe + UI
+            console.log('AI Processing complete');
+            
+            setTimeout(() => {
+                aiOverlay.classList.remove('active');
+                
+                // Start globe and UI reveal
+                revealGlobeAndUI(globe, countryData, connections, globeViz);
+            }, 500);
+        });
+    }, { once: true });
+}
+
+/**
+ * AI Processing animation with steps
+ */
+function startAIProcessing(onComplete) {
+    const steps = [
+        { id: 'aiStep1', duration: 700 },
+        { id: 'aiStep2', duration: 800 },
+        { id: 'aiStep3', duration: 700 },
+        { id: 'aiStep4', duration: 800 }
+    ];
+    
+    let currentStep = 0;
+    
+    function activateStep() {
+        if (currentStep < steps.length) {
+            const step = steps[currentStep];
+            const stepElement = document.getElementById(step.id);
+            
+            // Activate current step
+            stepElement.classList.add('active');
+            
+            setTimeout(() => {
+                // Complete current step
+                stepElement.classList.remove('active');
+                stepElement.classList.add('completed');
+                
+                currentStep++;
+                activateStep();
+            }, step.duration);
+        } else {
+            // All steps completed
+            setTimeout(onComplete, 300);
+        }
+    }
+    
+    activateStep();
+}
+
+/**
+ * Reveal globe and UI after AI processing
+ */
+function revealGlobeAndUI(globe, countryData, connections, globeViz) {
+    // Step 1: Fade in globe
+    console.log('Revealing globe with fade-in animation');
+    globeViz.classList.add('fade-in');
+
+    // Step 2: Animate points after globe fade-in
+    setTimeout(() => {
+        console.log('Growing points and arcs...');
+        const enabledCountries = new Set(countryData.map(country => country.name));
+        const enabledCountryData = countryData.filter(country => enabledCountries.has(country.name));
+
+        animatePointsSequential(globe, enabledCountryData, () => {
+            animateArcsSequential(globe, connections);
+        });
+    }, 1500);
+
+    // Step 3: Reveal UI panels with staggered animation
+    setTimeout(() => {
+        console.log('Revealing UI panels');
+        
+        const infoPanel = document.getElementById('infoPanel');
+        const categoryPanel = document.getElementById('categoryPanel');
+        const countryPanel = document.getElementById('countryPanel');
+        
+        // Add fade-in animation
+        infoPanel?.classList.add('ui-fade-in', 'ai-revealed');
         
         setTimeout(() => {
-            loadingScreen.style.display = 'none';
-        }, 500); // Match CSS animation time (0.5s)
-
-        // Step 2: Fade in globe (empieza inmediatamente con el fade out)
-        console.log('Step 2: Fade in globe (1.5s)');
-        globeViz.classList.add('fade-in');
-
-        // Step 3: Puntos empiezan DESPUÉS del fade in del globe
+            categoryPanel?.classList.add('ui-fade-in', 'ai-revealed');
+        }, 200);
+        
         setTimeout(() => {
-            console.log('Step 3: Growing points and arcs...');
-            const enabledCountries = new Set(countryData.map(country => country.name));
-            const enabledCountryData = countryData.filter(country => enabledCountries.has(country.name));
+            countryPanel?.classList.add('ui-fade-in', 'ai-revealed');
+        }, 400);
+    }, 1600);
 
-            animatePointsSequential(globe, enabledCountryData, () => {
-                animateArcsSequential(globe, connections);
-            });
-        }, 1500); // Después de que termine el fade in del globe (1.5s)
-
-        // Step 4: UI panels aparecen DESPUÉS del globe (primero termina el fade in del globe a los 1.5s)
-        // Luego las UI aparecen con delays adicionales: 2s, 2.2s, 2.4s desde el inicio del fade out
-        setTimeout(() => {
-            console.log('Step 4: Starting UI fade in animations');
-            // Activar las animaciones de la UI
-            document.querySelector('.info-panel')?.classList.add('ui-fade-in');
-            document.querySelector('.country-panel')?.classList.add('ui-fade-in');
-            document.querySelector('.category-panel')?.classList.add('ui-fade-in');
-        }, 1600); // Globe termina fade in a los 1.5s, UI empieza a los 1.6s
-
-        // Step 5: Tooltip
-        setTimeout(() => {
-            const tooltip = document.getElementById('customTooltip');
-            tooltip.classList.remove('loading-disabled');
-        }, 2000);
-    }
+    // Step 4: Enable tooltip
+    setTimeout(() => {
+        const tooltip = document.getElementById('customTooltip');
+        tooltip?.classList.remove('loading-disabled');
+    }, 2000);
 }
 
 /**

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superside Global Visualization</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js para el Gráfico de Esfera -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- D3.js para el Gráfico Radial -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="css/viz2-styles.css">
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-12">
+        <!-- Header -->
+        <div class="text-center py-8">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-[#86F5AF] mb-3 tracking-tight uppercase" style="text-shadow: 0 0 10px rgba(134,245,175,0.2);">Superside Global Flow</h1>
+            <p class="text-[#4A9B5E] text-lg font-mono">24h Continuous Operational Workflow</p>
+        </div>
+
+        <!-- Section 1: Radial Clock -->
+        <div class="card p-8 md:p-10">
+            <div class="flex flex-col md:flex-row justify-between items-start mb-8 border-b border-[#4A9B5E] pb-6">
+                <div class="max-w-3xl">
+                    <h2 class="text-3xl font-bold text-[#86F5AF] mb-3">01. The Weighted Clock</h2>
+                    <p class="text-[#86F5AF]/80 text-sm leading-relaxed">
+                        <span class="text-[#A1D4FF] font-bold">Blue Zone = NYC Start (8AM) to LA End (8PM ET)</span>
+                        <br>
+                        Hover over any bar to reveal details. <span class="text-[#8DFDBA]">APAC is the outer ring</span> for high visibility.
+                    </p>
+                </div>
+            </div>
+
+            <!-- D3 Radial Container -->
+            <div id="radialChart"></div>
+        </div>
+
+        <!-- Section 2: Sphere -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="flex flex-col justify-center">
+                <div class="card p-10 h-full flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-[#DAFF87]/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                    <h2 class="text-3xl font-bold text-[#86F5AF] mb-2">02. Hemispheric Advantage</h2>
+                    <h3 class="text-lg text-[#4A9B5E] font-medium mb-6 font-mono">"Seasonal Immunity"</h3>
+                    <p class="text-[#86F5AF]/90 mb-8 text-lg leading-relaxed">
+                        Our talent is geographically split almost 55/45. This allows us to avoid seasonal productivity dips.
+                    </p>
+                    <div class="space-y-8">
+                        <div class="flex items-start group">
+                            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-[#A1D4FF]/10 flex items-center justify-center mr-4 border border-[#A1D4FF]/30">
+                                <span class="text-[#A1D4FF] font-black text-xl">N</span>
+                            </div>
+                            <div>
+                                <h4 class="text-[#A1D4FF] font-bold text-lg">Northern Hemisphere (54.5%)</h4>
+                                <div class="text-xs font-bold text-[#4A9B5E] uppercase tracking-widest mb-1 font-mono">SUMMER VACATION SHIELD</div>
+                                <p class="text-[#86F5AF]/70 text-sm">When Europe/USA slow down in August (Summer), the South is at its winter productivity peak.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start group">
+                            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-[#D8FF85]/10 flex items-center justify-center mr-4 border border-[#D8FF85]/30">
+                                <span class="text-[#D8FF85] font-black text-xl">S</span>
+                            </div>
+                            <div>
+                                <h4 class="text-[#D8FF85] font-bold text-lg">Southern Hemisphere (45.5%)</h4>
+                                <div class="text-xs font-bold text-[#4A9B5E] uppercase tracking-widest mb-1 font-mono">WINTER VACATION SHIELD</div>
+                                <p class="text-[#86F5AF]/70 text-sm">When the South slows down for summer (Dec/Jan), the North sustains global operations.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-10 flex flex-col items-center justify-center relative min-h-[500px]">
+                <h3 class="text-xl font-bold mb-10 z-10 text-[#86F5AF] tracking-widest uppercase text-sm">Global Talent Distribution</h3>
+                <div class="relative w-[320px] h-[320px]">
+                    <div class="sphere-glow"></div>
+                    <div class="sphere-container">
+                        <canvas id="sphereChart"></canvas>
+                        <svg class="sphere-grid" viewBox="0 0 320 320">
+                            <!-- Meridians (Longitude lines) -->
+                            <ellipse cx="160" cy="160" rx="80" ry="160" />
+                            <ellipse cx="160" cy="160" rx="140" ry="160" />
+                            <line x1="160" y1="0" x2="160" y2="320" class="meridian" />
+                            
+                            <!-- Parallels (Latitude lines) -->
+                            <line x1="0" y1="80" x2="320" y2="80" class="latitude" />
+                            <line x1="0" y1="240" x2="320" y2="240" class="latitude" />
+                            <line x1="0" y1="160" x2="320" y2="160" class="equator" />
+                            
+                            <!-- Cardinal Labels -->
+                            <text x="160" y="15" class="cardinal-label" text-anchor="middle">N</text>
+                            <text x="160" y="312" class="cardinal-label" text-anchor="middle">S</text>
+                            <text x="10" y="165" class="cardinal-label" text-anchor="start">W</text>
+                            <text x="310" y="165" class="cardinal-label" text-anchor="end">E</text>
+                            
+                            <!-- Hemisphere Labels -->
+                            <text x="160" y="100" class="hemisphere-label" text-anchor="middle">NORTHERN</text>
+                            <text x="160" y="230" class="hemisphere-label" text-anchor="middle">SOUTHERN</text>
+                            
+                            <!-- Equator Label -->
+                            <text x="245" y="155" class="equator-label" text-anchor="middle">EQUATOR</text>
+                        </svg>
+                    </div>
+                    <!-- External Labels -->
+                    <div id="northLabel" class="sphere-label-box" style="top: 5%; right: -35%;">
+                        <div class="text-[#A1D4FF] text-3xl font-black font-mono">456</div>
+                        <div class="text-[#4A9B5E] text-[10px] uppercase font-bold tracking-wider">People North</div>
+                        <div class="sphere-description">Summer vacation shield</div>
+                    </div>
+                    <div id="southLabel" class="sphere-label-box" style="bottom: 5%; left: -35%;">
+                        <div class="text-[#D8FF85] text-3xl font-black font-mono">381</div>
+                        <div class="text-[#4A9B5E] text-[10px] uppercase font-bold tracking-wider">People South</div>
+                        <div class="sphere-description">Winter vacation shield</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visualization scripts -->
+    <script type="module">
+        import { initRadialChart } from './js/visualizations/radial-chart.js';
+        import { initSphereChart } from './js/visualizations/sphere-chart.js';
+
+        // Initialize charts on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initRadialChart('radialChart');
+            initSphereChart('sphereChart');
+        });
+    </script>
+</body>
+</html>

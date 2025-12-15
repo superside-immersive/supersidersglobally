@@ -19,6 +19,12 @@
     
     <link rel="stylesheet" href="css/styles.css">
     
+    <!-- D3.js para visualización radial de husos horarios -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <!-- Chart.js para visualización de hemisferios -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- CRÍTICO: NO cargar NADA pesado hasta que termine la animación -->
     <!-- Globe.gl y Three.js se cargarán DESPUÉS del logo -->
     
@@ -75,6 +81,45 @@
 </head>
 
 <body>
+    <!-- AI Processing Overlay -->
+    <div id="aiOverlay" class="ai-overlay">
+        <div class="ai-prompt-container" id="aiPromptContainer">
+            <div class="ai-prompt-text">
+                Let's use AI to generate insights about supersiders data and visualize it.
+            </div>
+            <button class="ai-prompt-button" id="aiPromptButton">
+                Generate Insights
+            </button>
+        </div>
+        
+        <div class="ai-processing-container" id="aiProcessingContainer">
+            <div class="ai-brain-icon">
+                <div class="brain-pulse"></div>
+                <div class="brain-pulse"></div>
+                <div class="brain-pulse"></div>
+            </div>
+            <div class="ai-processing-text">Processing Supersiders Data...</div>
+            <div class="ai-steps">
+                <div class="ai-step" id="aiStep1">
+                    <div class="ai-step-icon"></div>
+                    <div class="ai-step-text">Analyzing 76 countries and 837 supersiders</div>
+                </div>
+                <div class="ai-step" id="aiStep2">
+                    <div class="ai-step-icon"></div>
+                    <div class="ai-step-text">Generating intelligent questions</div>
+                </div>
+                <div class="ai-step" id="aiStep3">
+                    <div class="ai-step-icon"></div>
+                    <div class="ai-step-text">Creating visualization insights</div>
+                </div>
+                <div class="ai-step" id="aiStep4">
+                    <div class="ai-step-icon"></div>
+                    <div class="ai-step-text">Building interactive experience</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Loading screen overlay -->
     <div id="loadingScreen">
         <!-- SVG loader: uses a mask to reveal the fill from bottom->top (water effect). No white outline. -->
@@ -107,8 +152,74 @@
     <!-- Globe visualization container -->
     <div id="globeViz"></div>
     
+    <!-- Dark overlay to cover globe when timezone view is active -->
+    <div id="globeDarkOverlay" class="globe-dark-overlay"></div>
+    
+    <!-- Timezone Radial Overlay -->
+    <div id="timezoneOverlay" class="timezone-overlay" style="display: none;">
+        <div id="radialChartOverlay"></div>
+    </div>
+    
+    <!-- Hemisphere Distribution Overlay -->
+    <div id="hemisphereOverlay" class="hemisphere-overlay" style="display: none;">
+        <div class="hemisphere-container">
+            <div class="hemisphere-sphere-wrapper">
+                <canvas id="sphereChartOverlay"></canvas>
+                <svg class="sphere-grid" viewBox="0 0 500 500">
+                    <ellipse cx="250" cy="250" rx="125" ry="250" />
+                    <ellipse cx="250" cy="250" rx="218" ry="250" />
+                    <line x1="250" y1="0" x2="250" y2="500" class="meridian" />
+                    <line x1="0" y1="125" x2="500" y2="125" class="latitude" />
+                    <line x1="0" y1="375" x2="500" y2="375" class="latitude" />
+                    <line x1="0" y1="250" x2="500" y2="250" class="equator" />
+                    <text x="250" y="25" class="cardinal-label" text-anchor="middle">N</text>
+                    <text x="250" y="490" class="cardinal-label" text-anchor="middle">S</text>
+                    <text x="20" y="257" class="cardinal-label" text-anchor="start">W</text>
+                    <text x="480" y="257" class="cardinal-label" text-anchor="end">E</text>
+                    <text x="250" y="155" class="hemisphere-label" text-anchor="middle">NORTHERN</text>
+                    <text x="250" y="360" class="hemisphere-label" text-anchor="middle">SOUTHERN</text>
+                    <text x="380" y="242" class="equator-label" text-anchor="middle">EQUATOR</text>
+                </svg>
+            </div>
+            
+            <!-- Hemisphere Insight Box -->
+            <div class="hemisphere-insight-box">
+                <div class="insight-title">Seasonal Balance</div>
+                <div class="insight-text">
+                    Opposite seasons enable natural workflow continuity. Summer breaks alternate between hemispheres, ensuring uninterrupted global capacity.
+                </div>
+            </div>
+            
+            <!-- External Labels for Overlay -->
+            <div id="northLabelOverlay" class="sphere-label-box" style="top: 20%; right: -18%;">
+                <div class="text-[#A1D4FF] text-3xl font-black font-mono" style="color: #A1D4FF; font-size: 28px; font-weight: 900;">456</div>
+                <div style="color: #4A9B5E; font-size: 10px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">People North</div>
+                <div class="sphere-description">Summer vacation shield</div>
+            </div>
+            <div id="southLabelOverlay" class="sphere-label-box" style="bottom: 20%; left: -18%;">
+                <div style="color: #D8FF85; font-size: 28px; font-weight: 900;">381</div>
+                <div style="color: #4A9B5E; font-size: 10px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">People South</div>
+                <div class="sphere-description">Winter vacation shield</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Languages Sunburst Overlay -->
+    <div id="languagesOverlay" class="languages-overlay" style="display: none;">
+        <div class="languages-container">
+            <div id="languagesChartOverlay"></div>
+            <!-- Languages Insight Box -->
+            <div class="languages-insight-box">
+                <div class="insight-title">Global Communication</div>
+                <div class="insight-text">
+                    All Supersiders speak English as our common language. Beyond that, our team brings a rich tapestry of native languages, enabling authentic connections with diverse markets worldwide.
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Info Panel -->
-    <div class="info-panel">
+    <div class="info-panel ai-hidden" id="infoPanel">
         <h2>SUPERSIDERS GLOBALLY</h2>
         <p>Total countries: <span id="country-count">0</span></p>
         <p>Supersiders selected: <span id="total-count">0</span></p>
@@ -116,15 +227,26 @@
     </div>
     
     <!-- Category Panel -->
-    <div class="category-panel">
+    <div class="category-panel ai-hidden" id="categoryPanel">
         <h3>Explore Questions</h3>
         <div class="category-list" id="categoryList">
             <!-- Categories will be populated here -->
         </div>
+        <div class="visualization-toggles">
+            <div id="timezoneToggle" class="category-item viz-toggle">
+                <span class="category-question">What does our timezone coverage look like?</span>
+            </div>
+            <div id="hemisphereToggle" class="category-item viz-toggle">
+                <span class="category-question">How is talent split by hemisphere?</span>
+            </div>
+            <div id="languagesToggle" class="category-item viz-toggle">
+                <span class="category-question">What languages do supersiders speak?</span>
+            </div>
+        </div>
     </div>
     
     <!-- Country Panel -->
-    <div class="country-panel collapsed" id="countryPanel">
+    <div class="country-panel collapsed ai-hidden" id="countryPanel">
         <h3 onclick="toggleCountryPanel()">
             Countries 
             <span class="collapse-arrow" id="collapseArrow">▼</span>

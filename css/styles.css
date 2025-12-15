@@ -290,6 +290,282 @@ body {
     opacity: 1;
 }
 
+/* Visualization Toggle Buttons */
+.visualization-toggles {
+    margin-top: 6px;
+}
+
+.viz-toggle.active {
+    background: #86F5AF !important;
+    border-color: #86F5AF !important;
+    color: #0F2133 !important;
+}
+
+.viz-toggle.active .category-question {
+    color: #0F2133 !important;
+}
+
+/* AI Processing Overlay */
+.ai-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+}
+
+.ai-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.ai-prompt-container {
+    text-align: center;
+    max-width: 600px;
+    padding: 40px;
+}
+
+.ai-prompt-text {
+    font-size: 24px;
+    color: #86F5AF;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    letter-spacing: 0.5px;
+}
+
+.ai-prompt-button {
+    background: linear-gradient(135deg, #86F5AF 0%, #4A9B5E 100%);
+    color: #0F2133;
+    border: none;
+    padding: 18px 48px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 24px rgba(134, 245, 175, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ai-prompt-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(134, 245, 175, 0.5);
+    background: linear-gradient(135deg, #DAFF87 0%, #86F5AF 100%);
+}
+
+.ai-processing-container {
+    display: none;
+    text-align: center;
+}
+
+.ai-processing-container.active {
+    display: block;
+}
+
+.ai-brain-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 30px;
+    position: relative;
+}
+
+.brain-pulse {
+    width: 100%;
+    height: 100%;
+    border: 3px solid #86F5AF;
+    border-radius: 50%;
+    position: absolute;
+    animation: brainPulse 2s ease-in-out infinite;
+}
+
+.brain-pulse:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.brain-pulse:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes brainPulse {
+    0%, 100% {
+        transform: scale(0.8);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.3;
+    }
+}
+
+.ai-processing-text {
+    font-size: 20px;
+    color: #86F5AF;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.ai-steps {
+    margin-top: 30px;
+    text-align: left;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ai-step {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    margin: 8px 0;
+    background: rgba(134, 245, 175, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid transparent;
+    opacity: 0.3;
+    transition: all 0.4s ease;
+}
+
+.ai-step.active {
+    opacity: 1;
+    border-left-color: #86F5AF;
+    background: rgba(134, 245, 175, 0.2);
+}
+
+.ai-step.completed {
+    opacity: 1;
+    border-left-color: #4A9B5E;
+}
+
+.ai-step-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #86F5AF;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.ai-step.active .ai-step-icon {
+    background: #86F5AF;
+    animation: spin 1s linear infinite;
+}
+
+.ai-step.completed .ai-step-icon {
+    background: #4A9B5E;
+    border-color: #4A9B5E;
+}
+
+.ai-step.completed .ai-step-icon::after {
+    content: '✓';
+    color: #0F2133;
+    font-weight: bold;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.ai-step-text {
+    color: #86F5AF;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Hemisphere Insight Box */
+.hemisphere-insight-box {
+    position: absolute;
+    bottom: 8%;
+    right: 3%;
+    max-width: 280px;
+    background: rgba(0, 0, 0, 0.88);
+    border: 2px solid #86F5AF;
+    border-radius: 12px;
+    padding: 14px 18px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 20px rgba(134, 245, 175, 0.2);
+    z-index: 35;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.4s;
+}
+
+.hemisphere-overlay.fade-in .hemisphere-insight-box {
+    opacity: 1;
+}
+
+.insight-title {
+    font-size: 11px;
+    color: #86F5AF;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    font-family: 'Space Mono', monospace;
+}
+
+.insight-text {
+    font-size: 12px;
+    color: #E8E8E8;
+    line-height: 1.5;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* Timezone Bar Hover Effects */
+.timezone-arc:hover {
+    filter: brightness(1.3);
+    transition: filter 0.2s ease;
+}
+
+/* Diagonal stripe pattern for hover */
+@keyframes diagonalMove {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 20px 20px;
+    }
+}
+
+@keyframes diagonalSlide {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(20px);
+    }
+}
+
+/* Hide panels initially */
+.category-panel.ai-hidden,
+.country-panel.ai-hidden,
+.info-panel.ai-hidden {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.category-panel.ai-revealed,
+.country-panel.ai-revealed,
+.info-panel.ai-revealed {
+    opacity: 1;
+    transform: translateX(0);
+}
+
 .country-content {
     transition: opacity 0.3s ease, transform 0.3s ease;
     transform: translateY(0);
@@ -482,6 +758,717 @@ body {
 }
 
 .tooltip-coords {
+    color: rgba(134, 245, 175, 0.7);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Dark overlay to cover globe */
+.globe-dark-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000000;
+    opacity: 0;
+    z-index: 40;
+    pointer-events: none;
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.globe-dark-overlay.active {
+    opacity: 0.92;
+}
+
+/* Timezone overlay styles */
+.timezone-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.timezone-overlay.fade-in {
+    animation: overlayFadeIn 0.8s ease-out forwards;
+}
+
+.timezone-overlay.fade-out {
+    animation: overlayFadeOut 0.8s ease-out forwards;
+}
+
+@keyframes overlayFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes overlayFadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+#radialChartOverlay {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+}
+
+#radialChartOverlay svg {
+    max-width: 800px;
+    max-height: 800px;
+}
+
+/* Timezone toggle button */
+.timezone-toggle-btn {
+    width: 100%;
+    background: rgba(134, 245, 175, 0.1);
+    color: #86F5AF;
+    border: 2px solid #86F5AF;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.timezone-toggle-btn:hover {
+    background: rgba(134, 245, 175, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(134, 245, 175, 0.3);
+}
+
+.timezone-toggle-btn.active {
+    background: #86F5AF;
+    color: #0F2133;
+    border-color: #86F5AF;
+}
+
+/* Hemisphere toggle button */
+.hemisphere-toggle-btn {
+    width: 100%;
+    background: rgba(161, 212, 255, 0.1);
+    color: #A1D4FF;
+    border: 2px solid #A1D4FF;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hemisphere-toggle-btn:hover {
+    background: rgba(161, 212, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(161, 212, 255, 0.3);
+}
+
+.hemisphere-toggle-btn.active {
+    background: #A1D4FF;
+    color: #0F2133;
+    border-color: #A1D4FF;
+}
+
+/* Hemisphere Overlay Styles */
+.hemisphere-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hemisphere-overlay.fade-in {
+    opacity: 1;
+    pointer-events: none;
+}
+
+.hemisphere-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.hemisphere-container {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+}
+
+.hemisphere-sphere-wrapper {
+    position: relative;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    box-shadow: 
+        inset -40px -40px 80px rgba(0,0,0,1),
+        inset 5px 5px 20px rgba(255, 255, 255, 0.1),
+        0 0 60px rgba(134, 245, 175, 0.15);
+    overflow: hidden;
+    border: 1px solid rgba(134, 245, 175, 0.2);
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.05) 0%, transparent 50%);
+}
+
+.hemisphere-sphere-wrapper canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.hemisphere-overlay .sphere-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.9;
+}
+
+.hemisphere-overlay .sphere-grid ellipse,
+.hemisphere-overlay .sphere-grid line.meridian,
+.hemisphere-overlay .sphere-grid line.latitude {
+    fill: none;
+    stroke: #000000;
+    stroke-width: 1;
+    opacity: 0.2;
+}
+
+.hemisphere-overlay .sphere-grid line.equator {
+    stroke: #000000;
+    stroke-width: 1.5;
+    stroke-dasharray: 6, 4;
+    opacity: 0.3;
+}
+
+.hemisphere-overlay .cardinal-label {
+    font-size: 16px;
+    font-weight: 900;
+    fill: #000000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.9;
+    font-family: 'Space Mono', monospace;
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+
+.hemisphere-overlay .hemisphere-label {
+    font-size: 12px;
+    font-weight: 900;
+    fill: #000000;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.8;
+    font-family: 'Space Mono', monospace;
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 2.5px;
+    stroke-linejoin: round;
+}
+
+.hemisphere-overlay .equator-label {
+    font-size: 9px;
+    font-weight: 800;
+    fill: #000000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    font-family: 'Space Mono', monospace;
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 2px;
+    stroke-linejoin: round;
+}
+
+/* Radial chart styles adapted from viz2 */
+.radial-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    z-index: 1000;
+    white-space: nowrap;
+}
+
+.marker-text {
+    fill: #86F5AF;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.marker-subtext {
+    fill: #4A9B5E;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.clock-label {
+    fill: #4A9B5E;
+    font-size: 12px;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.track-segment {
+    cursor: pointer;
+    transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.track-segment.dimmed {
+    opacity: 0.2;
+}
+
+.track-label {
+    fill: #86F5AF;
+    font-size: 14px;
+    font-weight: 900;
+    text-anchor: middle;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    pointer-events: none;
+}
+
+.track-count-bg {
+    fill: #000000;
+    fill-opacity: 0.9;
+    stroke: #4A9B5E;
+    stroke-width: 1;
+}
+
+.track-count-text {
+    fill: #FFFFFF;
+    font-size: 13px;
+    font-weight: 900;
+    text-anchor: middle;
+    filter: drop-shadow(0 0 2px rgba(0,0,0,1));
+}
+
+.hub-label {
+    fill: #86F5AF;
+    font-size: 18px;
+    font-weight: 900;
+    text-anchor: middle;
+    text-transform: uppercase;
+}
+
+.hub-sublabel {
+    fill: #4A9B5E;
+    font-size: 10px;
+    font-weight: 700;
+    text-anchor: middle;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Globe opacity transition - very smooth fade */
+#globeViz {
+    transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Radial chart elements - base styles (animations handled by D3.js) */
+.marker-line {
+    stroke: #DAFF87;
+    stroke-width: 2;
+}
+
+.marker-text,
+.marker-subtext {
+    /* Styles handled by D3 */
+}
+
+.track-segment {
+    cursor: pointer;
+    transition: filter 0.3s ease;
+}
+
+.track-label {
+    pointer-events: none;
+}
+
+.hub-label,
+.hub-sublabel {
+    /* Styles defined in base classes */
+}
+
+.clock-label {
+    /* Base style */
+}
+
+/* ========================================
+   GRÁFICO ESFERA - ESTILOS CHART.JS
+   ======================================== */
+.sphere-container {
+    position: relative; 
+    width: 320px; 
+    height: 320px; 
+    border-radius: 50%;
+    box-shadow: inset -40px -40px 80px rgba(0,0,0,1), 
+                inset 5px 5px 20px rgba(255, 255, 255, 0.1); 
+    overflow: hidden; 
+    border: 1px solid rgba(134, 245, 175, 0.2);
+}
+
+.sphere-container canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.sphere-container-3d {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.sphere-container-3d canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.sphere-grid {
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    pointer-events: none; 
+    z-index: 5; 
+    opacity: 0.9; 
+}
+
+.sphere-grid ellipse, 
+.sphere-grid line.meridian, 
+.sphere-grid line.latitude {
+    fill: none; 
+    stroke: #000000; 
+    stroke-width: 1; 
+    opacity: 0.2; 
+}
+
+.sphere-grid line.equator {
+    stroke: #000000; 
+    stroke-width: 1.5; 
+    stroke-dasharray: 6, 4; 
+    opacity: 0.3; 
+}
+
+.sphere-glow {
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
+    width: 360px; 
+    height: 360px; 
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(134, 245, 175, 0.05) 100%);
+    box-shadow: 0 0 30px rgba(134, 245, 175, 0.1); 
+    pointer-events: none; 
+    z-index: 0;
+}
+
+/* Cardinal and Hemisphere Labels */
+.cardinal-label {
+    font-size: 16px;
+    font-weight: 900;
+    fill: #000000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.9;
+    font-family: 'Space Mono', monospace;
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+
+.hemisphere-label {
+    font-size: 12px;
+    font-weight: 900;
+    fill: #000000;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.8;
+    font-family: 'Space Mono', monospace;
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 2.5px;
+    stroke-linejoin: round;
+}
+
+.equator-label {
+    font-size: 9px;
+    font-weight: 800;
+    fill: #000000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    font-family: 'Space Mono', monospace;
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 2px;
+    stroke-linejoin: round;
+}
+
+.sphere-label-box {
+    position: absolute; 
+    background: rgba(0,0,0,0.98); 
+    border: 2px solid #86F5AF;
+    padding: 12px 16px; 
+    border-radius: 12px; 
+    backdrop-filter: blur(8px); 
+    z-index: 30;
+    box-shadow: 0 8px 24px rgba(134, 245, 175, 0.2), 0 0 0 1px rgba(134, 245, 175, 0.1); 
+    min-width: 140px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.sphere-label-box.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.sphere-label-box .sphere-description {
+    font-size: 10px;
+    color: #86F5AF;
+    margin-top: 6px;
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.connector-line { 
+    display: none;
+}
+
+/* ============================================
+   Languages Sunburst Overlay Styles
+   ============================================ */
+
+.languages-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.languages-overlay.fade-in {
+    opacity: 1;
+    pointer-events: none;
+}
+
+.languages-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.languages-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+}
+
+#languagesChartOverlay {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+}
+
+#languagesChartOverlay svg {
+    max-width: 800px;
+    max-height: 800px;
+}
+
+/* Sunburst arc styles */
+.sunburst-arc {
+    transition: opacity 0.2s ease;
+}
+
+.sunburst-arc:hover {
+    filter: brightness(1.15);
+}
+
+/* Arc labels */
+.arc-label {
+    font-family: 'Space Mono', Arial, sans-serif;
+    text-shadow: none;
+    paint-order: stroke fill;
+    stroke: rgba(0, 0, 0, 0.7);
+    stroke-width: 2.5px;
+    stroke-linejoin: round;
+}
+
+/* Center text styles */
+.center-text {
+    font-family: 'Space Mono', Arial, sans-serif;
+}
+
+/* Breadcrumb trail */
+.breadcrumb-trail {
+    font-family: 'Space Mono', Arial, sans-serif;
+}
+
+/* Legend styles */
+.legend {
+    font-family: 'Space Mono', Arial, sans-serif;
+}
+
+.legend-title {
+    font-family: 'Space Mono', Arial, sans-serif;
+}
+
+/* Languages Insight Box */
+.languages-insight-box {
+    position: absolute;
+    bottom: 8%;
+    right: 3%;
+    max-width: 300px;
+    background: rgba(0, 0, 0, 0.88);
+    border: 2px solid #86F5AF;
+    border-radius: 12px;
+    padding: 14px 18px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 20px rgba(134, 245, 175, 0.2);
+    z-index: 35;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.4s;
+}
+
+.languages-overlay.fade-in .languages-insight-box {
+    opacity: 1;
+}
+
+.languages-insight-box .insight-title {
+    font-size: 11px;
+    color: #86F5AF;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    font-family: 'Space Mono', monospace;
+}
+
+.languages-insight-box .insight-text {
+    font-size: 12px;
+    color: #E8E8E8;
+    line-height: 1.5;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* Hover tooltip for sunburst */
+.sunburst-tooltip {
+    position: fixed;
+    background: rgba(26, 48, 47, 0.98);
+    border: 2px solid #86F5AF;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: white;
+    font-size: 13px;
+    white-space: nowrap;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    max-width: 300px;
+    z-index: 99999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sunburst-tooltip.show {
+    opacity: 1;
+}
+
+.sunburst-tooltip .tooltip-language {
+    color: #86F5AF;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sunburst-tooltip .tooltip-count {
+    color: #DAFF87;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.sunburst-tooltip .tooltip-country {
     color: rgba(134, 245, 175, 0.7);
     font-size: 11px;
     text-transform: uppercase;

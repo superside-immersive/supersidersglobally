@@ -27,18 +27,18 @@ export function createAstronautTemplate(THREE) {
         opacity: 0.6 
     });
 
-    // Simple helmet
-    const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 8), whiteMat);
+    // Simple helmet - OPTIMIZADO: reducido de 8x8 a 4x4 segmentos
+    const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.5, 4, 4), whiteMat);
     helmet.position.y = 0.6;
     group.add(helmet);
 
-    // Visor (slightly inset)
-    const visor = new THREE.Mesh(new THREE.SphereGeometry(0.45, 8, 8), visorMat);
+    // Visor (slightly inset) - OPTIMIZADO: reducido de 8x8 a 4x4 segmentos
+    const visor = new THREE.Mesh(new THREE.SphereGeometry(0.45, 4, 4), visorMat);
     visor.position.set(0, 0.6, 0.15);
     group.add(visor);
 
-    // Tiny body
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.3, 0.8, 6), whiteMat);
+    // Tiny body - OPTIMIZADO: reducido de 6 a 4 segmentos
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.3, 0.8, 4), whiteMat);
     body.position.y = -0.3;
     group.add(body);
 
@@ -180,12 +180,18 @@ export function updateOrbiters() {
 }
 
 /**
- * Initialize orbiter animation loop
+ * Initialize orbiter animation loop - OPTIMIZADO: throttled a ~30fps
  */
+let lastOrbitUpdate = 0;
 export function initializeOrbitersLoop() {
     (function orbitersLoop() {
-        updateOrbiters();
+        const now = Date.now();
+        // Throttle to ~30fps (33ms between updates) para ahorrar CPU
+        if (now - lastOrbitUpdate >= 33) {
+            updateOrbiters();
+            lastOrbitUpdate = now;
+        }
         requestAnimationFrame(orbitersLoop);
     })();
-    console.log('Astronaut orbiter system initialized');
+    console.log('Astronaut orbiter system initialized (throttled 30fps)');
 }

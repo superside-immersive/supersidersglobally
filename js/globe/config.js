@@ -83,10 +83,10 @@ export function initializeGlobe(container) {
         .pointColor(d => getPointColor(d.count, d.categoryColor))
         .pointAltitude(d => getPointSize(d.count) * 0.2)
         .pointRadius(d => getPointSize(d.count) * 0.8)
-        .pointResolution(6) // REDUCIDO: de 8 a 6 para mejor performance
+        .pointResolution(4) // OPTIMIZADO: reducido de 6 a 4 (33% menos geometría)
         .pointLabel(d => null)
         .pointsMerge(false)
-        .pointsTransitionDuration(1500)
+        .pointsTransitionDuration(800) // OPTIMIZADO: reducido de 1500ms
         
         // Arcs configuration - START WITH EMPTY DATA (will animate in later)
         .arcsData([])
@@ -104,14 +104,14 @@ export function initializeGlobe(container) {
             if (distance > 2000) return 0.15;
             return 0.08;
         })
-        .arcCurveResolution(24) // REDUCIDO: de 32 a 24 para mejor performance
-        .arcCircularResolution(2) // REDUCIDO: de 3 a 2 para mejor performance
+        .arcCurveResolution(12) // OPTIMIZADO: reducido de 24 a 12 (50% menos geometría)
+        .arcCircularResolution(1) // OPTIMIZADO: reducido de 2 a 1 (50% menos geometría)
         .arcStroke(0.1)
         .arcDashLength(0.25)
         .arcDashGap(1)
         .arcDashInitialGap(() => Math.random())
         .arcDashAnimateTime(0)
-        .arcsTransitionDuration(1500)
+        .arcsTransitionDuration(800) // OPTIMIZADO: reducido de 1500ms
         .enablePointerInteraction(true);
     
     // Add atmospheric effects
@@ -127,7 +127,7 @@ export function initializeGlobe(container) {
     controls.enableDamping = false; // Inicialmente deshabilitado (se activa en airplane mode)
     controls.dampingFactor = 0.05;
     controls.rotateSpeed = 0.5;
-    controls.minDistance = 101; // Prevenir zoom muy cercano
+    controls.minDistance = 121; // Prevenir zoom muy cercano (reducido 20% desde 101)
     controls.maxDistance = 500; // Prevenir zoom muy lejano
     
     return globe;

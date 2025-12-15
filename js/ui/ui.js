@@ -101,6 +101,37 @@ export function populateCategoryList(countryData, globe, updateVisualizationFn) 
         }
         
         categoryItem.addEventListener('click', (e) => {
+            // Immediately deactivate timezone, hemisphere or languages view if active
+            if (window.isTimezoneViewActive && window.deactivateTimezoneView) {
+                window.deactivateTimezoneView();
+            }
+            if (window.isHemisphereViewActive && window.deactivateHemisphereView) {
+                window.deactivateHemisphereView();
+            }
+            if (window.isLanguagesViewActive && window.deactivateLanguagesView) {
+                window.deactivateLanguagesView();
+            }
+            
+            // Also deactivate the toggle buttons
+            const timezoneToggle = document.getElementById('timezoneToggle');
+            const hemisphereToggle = document.getElementById('hemisphereToggle');
+            const languagesToggle = document.getElementById('languagesToggle');
+            if (timezoneToggle) {
+                timezoneToggle.classList.remove('active');
+                timezoneToggle.style.background = '';
+                timezoneToggle.style.borderColor = '';
+            }
+            if (hemisphereToggle) {
+                hemisphereToggle.classList.remove('active');
+                hemisphereToggle.style.background = '';
+                hemisphereToggle.style.borderColor = '';
+            }
+            if (languagesToggle) {
+                languagesToggle.classList.remove('active');
+                languagesToggle.style.background = '';
+                languagesToggle.style.borderColor = '';
+            }
+            
             document.querySelectorAll('.category-item').forEach(item => {
                 item.classList.remove('active');
                 item.style.background = '';
