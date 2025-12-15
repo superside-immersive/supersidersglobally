@@ -240,7 +240,7 @@ export function initSunburstChart(containerId = 'languagesChartOverlay') {
         .attr("dy", "0.35em")
         .style("font-size", d => d.depth === 1 ? "16px" : "12px")
         .style("font-weight", "800")
-        .style("fill", d => d.depth === 1 ? "#0F2133" : "#FFF")
+        .style("fill", "#FFF")
         .style("text-shadow", "none")
         .style("pointer-events", "none")
         .style("opacity", 0)
@@ -251,9 +251,6 @@ export function initSunburstChart(containerId = 'languagesChartOverlay') {
         .delay((d, i) => 1000 + i * 50)
         .duration(400)
         .style("opacity", 1);
-
-    // Add legend
-    createLegend(currentSvg, width, height);
 }
 
 /**
@@ -331,76 +328,6 @@ function resetCenterText(centerGroup, totalSupersiders) {
 
     centerGroup.select(".center-label")
         .text("SUPERSIDERS");
-}
-
-/**
- * Create legend showing all countries
- */
-function createLegend(svg, width, height) {
-    // Get all countries sorted by count
-    const allCountries = countryData
-        .slice()
-        .sort((a, b) => b.count - a.count);
-
-    const legend = svg.append("g")
-        .attr("class", "legend")
-        .attr("transform", `translate(20, ${height - 30})`);
-
-    // Title
-    legend.append("text")
-        .attr("class", "legend-title")
-        .attr("x", 0)
-        .attr("y", -15)
-        .style("font-size", "11px")
-        .style("font-weight", "800")
-        .style("fill", "#86F5AF")
-        .style("letter-spacing", "1px")
-        .text("ALL COUNTRIES");
-
-    // Create scrollable container with columns
-    const itemsPerColumn = 25;
-    const columnWidth = 180;
-    const columns = Math.ceil(allCountries.length / itemsPerColumn);
-
-    allCountries.forEach((country, i) => {
-        const col = Math.floor(i / itemsPerColumn);
-        const row = i % itemsPerColumn;
-        
-        const itemGroup = legend.append("g")
-            .attr("transform", `translate(${col * columnWidth}, ${row * 16})`);
-
-        itemGroup.append("circle")
-            .attr("cx", 5)
-            .attr("cy", 0)
-            .attr("r", 3)
-            .style("fill", "#86F5AF");
-
-        itemGroup.append("text")
-            .attr("x", 12)
-            .attr("y", 0)
-            .attr("dy", "0.35em")
-            .style("font-size", "9px")
-            .style("font-weight", "600")
-            .style("fill", "#E8E8E8")
-            .text(country.name.length > 22 ? country.name.substring(0, 20) + '...' : country.name);
-
-        itemGroup.append("text")
-            .attr("x", 165)
-            .attr("y", 0)
-            .attr("dy", "0.35em")
-            .attr("text-anchor", "end")
-            .style("font-size", "8px")
-            .style("font-weight", "700")
-            .style("fill", "#86F5AF")
-            .text(country.count);
-    });
-
-    // Animate legend
-    legend.style("opacity", 0)
-        .transition()
-        .delay(1000)
-        .duration(600)
-        .style("opacity", 1);
 }
 
 /**

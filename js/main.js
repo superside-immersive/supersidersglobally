@@ -58,6 +58,12 @@ window.deactivateLanguagesView = null;
  * Toggle timezone visualization overlay
  */
 function toggleTimezoneView() {
+    // If already active, deactivate and return
+    if (isTimezoneViewActive) {
+        deactivateTimezoneView();
+        return;
+    }
+    
     // If hemisphere or languages view is active, deactivate them first
     if (isHemisphereViewActive) {
         deactivateHemisphereView();
@@ -195,6 +201,12 @@ window.deactivateTimezoneView = deactivateTimezoneView;
  */
 function toggleHemisphereView() {
     console.log('toggleHemisphereView called, current state:', isHemisphereViewActive);
+    
+    // If already active, deactivate and return
+    if (isHemisphereViewActive) {
+        deactivateHemisphereView();
+        return;
+    }
     
     // If timezone or languages view is active, deactivate them first
     if (isTimezoneViewActive) {
@@ -369,6 +381,12 @@ window.deactivateHemisphereView = deactivateHemisphereView;
 function toggleLanguagesView() {
     console.log('toggleLanguagesView called, current state:', isLanguagesViewActive);
     
+    // If already active, deactivate and return
+    if (isLanguagesViewActive) {
+        deactivateLanguagesView();
+        return;
+    }
+    
     // If timezone or hemisphere view is active, deactivate them first
     if (isTimezoneViewActive) {
         deactivateTimezoneView();
@@ -386,9 +404,9 @@ function toggleLanguagesView() {
         return;
     }
     
-    // Toggle state
-    isLanguagesViewActive = !isLanguagesViewActive;
-    window.isLanguagesViewActive = isLanguagesViewActive;
+    // Activate state
+    isLanguagesViewActive = true;
+    window.isLanguagesViewActive = true;
     console.log('New languages state:', isLanguagesViewActive);
     
     // Deactivate all categories when languages view is activated
