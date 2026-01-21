@@ -2,6 +2,8 @@
  * Astronaut Orbiters Module
  * Manages astronaut models orbiting around lone wolf country cylinders
  */
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 // Map to keep track of orbiters per country name
 export const astronautOrbiters = new Map();
@@ -54,6 +56,61 @@ export function createAstronautTemplate(THREE) {
 
     console.log('Astronaut template created:', group);
     return group;
+}
+
+const ASTRONAUT_GLB_URL = 'Mini2.glb';
+let astronautTemplatePromise = null;
+let cachedAstronautTemplate = null;
+
+function enhanceMaterials(root) {
+    if (!root) return;
+    root.traverse(node => {
+        if (node.isMesh && node.material) {
+            const m = node.material;
+            if (m.emissive) {
+                m.emissiveIntensity = Math.max(m.emissiveIntensity || 1, 1.35);
+            }
+            m.toneMapped = true;
+            m.needsUpdate = true;
+        }
+    });
+}
+
+function loadAstronautTemplate(THREE) {
+    if (cachedAstronautTemplate) {
+        return Promise.resolve(cachedAstronautTemplate);
+    }
+
+    if (!astronautTemplatePromise) {
+        astronautTemplatePromise = new Promise(resolve => {
+            const loader = new GLTFLoader();
+            loader.load(
+                ASTRONAUT_GLB_URL,
+                (gltf) => {
+                    const model = gltf.scene || gltf.scenes?.[0];
+                    if (!model) {
+                        console.warn('Mini2.glb has no scene, using fallback astronaut');
+                        cachedAstronautTemplate = createAstronautTemplate(THREE);
+                        resolve(cachedAstronautTemplate);
+                        return;
+                    }
+                    enhanceMaterials(model);
+                    model.position.set(0, 0, 0);
+                    model.scale.setScalar(1.0);
+                    cachedAstronautTemplate = model;
+                    resolve(model);
+                },
+                undefined,
+                (err) => {
+                    console.error('Error loading Mini2.glb, using fallback astronaut', err);
+                    cachedAstronautTemplate = createAstronautTemplate(THREE);
+                    resolve(cachedAstronautTemplate);
+                }
+            );
+        });
+    }
+
+    return astronautTemplatePromise;
 }
 
 /**
@@ -114,12 +171,8 @@ export function addOrbitingAstronaut(country, globe, THREE, getPointSize) {
     pivot.lookAt(0, 0, 0);
     pivot.rotateX(-Math.PI / 2);
     
-    // Create astronaut
-    const astronaut = createAstronautTemplate(THREE);
-    if (!astronaut) {
-        console.error('Failed to create astronaut template');
-        return;
-    }
+    // Create astronaut container (model loads async)
+    const astronaut = new THREE.Group();
     
     // Position astronaut to orbit around the cylinder
     const orbitRadius = 2.5;
@@ -145,6 +198,15 @@ export function addOrbitingAstronaut(country, globe, THREE, getPointSize) {
         speed: 1.0 + Math.random() * 0.5,
         country: country.name,
         normal: normal
+    });
+
+    // Load GLB model and attach when ready
+    loadAstronautTemplate(THREE).then(template => {
+        if (!template || !astronaut) return;
+        const model = SkeletonUtils.clone(template);
+        model.position.set(0, 0, 0);
+        model.scale.setScalar(1.0);
+        astronaut.add(model);
     });
 }
 

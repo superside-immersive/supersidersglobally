@@ -3,7 +3,7 @@
  * Coordinates all modules and initializes the application
  */
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { countryData } from './data/countries.js';
 import { categories } from './data/categories.js';
 import { generateConnections } from './globe/connections.js';
@@ -703,6 +703,61 @@ function updateVisualization() {
 }
 
 /**
+ * Configure renderer and lighting for emissive GLB materials
+ */
+function configureGlobeRendering(globe) {
+    if (!globe) return;
+
+    const renderer = globe.renderer();
+    const scene = globe.scene();
+    if (!renderer || !scene) return;
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.35;
+    renderer.physicallyCorrectLights = true;
+
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const env = pmrem.fromScene(new RoomEnvironment(), 0.1).texture;
+    scene.environment = env;
+    pmrem.dispose();
+
+    if (!scene.getObjectByName('astronautHemiLight')) {
+        const hemi = new THREE.HemisphereLight(0xffffff, 0x0a0a0a, 0.35);
+        hemi.name = 'astronautHemiLight';
+        scene.add(hemi);
+    }
+
+    if (!scene.getObjectByName('astronautAmbientLight')) {
+        const ambient = new THREE.AmbientLight(0xffffff, 0.25);
+        ambient.name = 'astronautAmbientLight';
+        scene.add(ambient);
+    }
+
+    if (!scene.getObjectByName('astronautKeyLight')) {
+        const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        keyLight.position.set(3, 5, 6);
+        keyLight.name = 'astronautKeyLight';
+        scene.add(keyLight);
+    }
+
+    if (!scene.getObjectByName('astronautFillLight')) {
+        const fillLight = new THREE.PointLight(0x7ecbff, 0.6, 15, 2);
+        fillLight.position.set(-2, 1, 3);
+        fillLight.name = 'astronautFillLight';
+        scene.add(fillLight);
+    }
+
+    const globeMaterial = typeof globe.globeMaterial === 'function' ? globe.globeMaterial() : null;
+    if (globeMaterial) {
+        globeMaterial.emissive = new THREE.Color(0x111111);
+        globeMaterial.emissiveIntensity = 0.6;
+        globeMaterial.needsUpdate = true;
+    }
+}
+
+/**
  * Initialize the application
  */
 function initializeApp() {
@@ -713,6 +768,7 @@ function initializeApp() {
     
     // Initialize the globe
     myGlobe = initializeGlobe(document.getElementById('globeViz'));
+    configureGlobeRendering(myGlobe);
     
     // Generate initial connections
     connections = generateConnections(countryData, enabledCountries, getActiveCategory());

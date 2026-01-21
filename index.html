@@ -57,12 +57,7 @@
             // ESPERAR 1 segundo (después del logo) para cargar scripts pesados
             setTimeout(function() {
                 console.log('Logo animation complete - now loading heavy scripts...');
-                
-                // Cargar Globe.gl
-                const globeScript = document.createElement('script');
-                globeScript.src = '//cdn.jsdelivr.net/npm/globe.gl';
-                document.head.appendChild(globeScript);
-                
+
                 // Cargar Import Map para Three.js
                 const importMap = document.createElement('script');
                 importMap.type = 'importmap';
@@ -73,7 +68,19 @@
                     }
                 });
                 document.head.appendChild(importMap);
-                
+
+                // Importar Three.js como módulo y exponerlo globalmente ANTES de Globe.gl
+                const threeBootstrap = document.createElement('script');
+                threeBootstrap.type = 'module';
+                threeBootstrap.textContent = `
+                    import * as THREE from 'three';
+                    window.THREE = THREE;
+                    const globeScript = document.createElement('script');
+                    globeScript.src = '//cdn.jsdelivr.net/npm/globe.gl';
+                    document.head.appendChild(globeScript);
+                `;
+                document.head.appendChild(threeBootstrap);
+
                 console.log('Heavy scripts loaded after animation');
             }, 1000);
         })();
