@@ -25,65 +25,13 @@
     <!-- Chart.js para visualización de hemisferios -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- CRÍTICO: NO cargar NADA pesado hasta que termine la animación -->
-    <!-- Globe.gl y Three.js se cargarán DESPUÉS del logo -->
-    
-    <script>
-        // SOLUCIÓN DEFINITIVA: Cargar scripts pesados SOLO después de que termine el logo
-        // Esto garantiza que la animación CSS corra sin NINGUNA interferencia
-        
-        (function() {
-            // Forzar GPU layer inmediatamente
-            window.addEventListener('DOMContentLoaded', function() {
-                const loadingScreen = document.getElementById('loadingScreen');
-                const logo = document.querySelector('.loading-logo');
-                const maskRect = document.querySelector('.mask-rect');
-                
-                if (loadingScreen) {
-                    loadingScreen.style.transform = 'translateZ(0)';
-                    loadingScreen.style.willChange = 'transform, opacity';
-                }
-                if (logo) {
-                    logo.style.transform = 'translateZ(0)';
-                    logo.style.willChange = 'transform';
-                }
-                if (maskRect) {
-                    maskRect.style.willChange = 'transform';
-                }
-                
-                console.log('GPU layers forced - animation running independently');
-            });
-            
-            // ESPERAR 1 segundo (después del logo) para cargar scripts pesados
-            setTimeout(function() {
-                console.log('Logo animation complete - now loading heavy scripts...');
-
-                // Cargar Import Map para Three.js
-                const importMap = document.createElement('script');
-                importMap.type = 'importmap';
-                importMap.textContent = JSON.stringify({
-                    "imports": {
-                        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-                    }
-                });
-                document.head.appendChild(importMap);
-
-                // Importar Three.js como módulo y exponerlo globalmente ANTES de Globe.gl
-                const threeBootstrap = document.createElement('script');
-                threeBootstrap.type = 'module';
-                threeBootstrap.textContent = `
-                    import * as THREE from 'three';
-                    window.THREE = THREE;
-                    const globeScript = document.createElement('script');
-                    globeScript.src = '//cdn.jsdelivr.net/npm/globe.gl';
-                    document.head.appendChild(globeScript);
-                `;
-                document.head.appendChild(threeBootstrap);
-
-                console.log('Heavy scripts loaded after animation');
-            }, 1000);
-        })();
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.183.2/+esm",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/"
+            }
+        }
     </script>
 </head>
 
@@ -291,23 +239,6 @@
         <div class="tooltip-coords" id="tooltipCoords">Lat: 0.00°, Lng: 0.00°</div>
     </div>
 
-    <!-- Main Application Script - CARGADO DESPUÉS DEL LOGO -->
-    <script>
-        // Cargar el script principal SOLO después de que Globe.gl esté disponible
-        setTimeout(function() {
-            // Esperar a que Globe.gl esté disponible
-            const checkGlobe = setInterval(function() {
-                if (typeof Globe !== 'undefined') {
-                    clearInterval(checkGlobe);
-                    console.log('Globe.gl ready - loading main app...');
-                    
-                    const mainScript = document.createElement('script');
-                    mainScript.type = 'module';
-                    mainScript.src = 'js/main.js';
-                    document.body.appendChild(mainScript);
-                }
-            }, 100);
-        }, 1100);
-    </script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>

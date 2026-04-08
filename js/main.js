@@ -2,6 +2,7 @@
  * Main Application Entry Point
  * Coordinates all modules and initializes the application
  */
+import Globe from 'https://cdn.jsdelivr.net/npm/globe.gl/+esm';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { countryData } from './data/countries.js';
@@ -28,8 +29,9 @@ import {
 } from './ui/ui.js';
 import { initRadialChart } from './visualizations/radial-chart.js';
 
-// Make THREE available globally
+// Make THREE and Globe available globally
 window.THREE = THREE;
+window.Globe = Globe;
 
 // Initialize the globe variable
 let myGlobe;

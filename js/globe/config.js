@@ -73,7 +73,7 @@ export function getArcColor(connection) {
 export function initializeGlobe(container) {
     const globe = new Globe(container)
         .globeImageUrl('https://upload.wikimedia.org/wikipedia/commons/b/b3/Solarsystemscope_texture_8k_earth_nightmap.jpg')
-        .backgroundImageUrl('//cdn.jsdelivr.net/npm/three-globe/example/img/night-sky.png')
+        .backgroundImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/night-sky.png')
         .pointOfView({ lat: 20, lng: 0, altitude: 2.5 })
         
         // Points configuration - START WITH EMPTY DATA (will animate in later)
